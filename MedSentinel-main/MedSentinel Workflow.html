@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedSentinel - User Workflow</title>
+    <style>
+        :root {
+            --color-primary: #2563eb;
+            --color-primary-light: #3b82f6;
+            --color-success: #10b981;
+            --color-warning: #f59e0b;
+            --color-bg: #f8fafc;
+            --color-surface: #ffffff;
+            --color-border: #e2e8f0;
+            --color-text: #1e293b;
+            --color-text-muted: #64748b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+
+        .workflow-container {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            margin-top: 30px;
+        }
+
+        .workflow-step {
+            background: var(--color-surface);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border-left: 5px solid var(--color-primary);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .workflow-step:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            background: var(--color-primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .step-title {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        .step-content {
+            margin-left: 66px;
+        }
+
+        .section-label {
+            font-weight: 600;
+            color: var(--color-primary);
+            margin-top: 16px;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .detail-box {
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 12px 0;
+        }
+
+        .detail-item {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .field-name {
+            font-weight: 600;
+            color: var(--color-text);
+            display: inline-block;
+            min-width: 180px;
+        }
+
+        .field-desc {
+            color: var(--color-text-muted);
+        }
+
+        .output-box {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border: 2px solid #0ea5e9;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 12px 0;
+        }
+
+        .output-item {
+            padding: 10px 0;
+            display: flex;
+            align-items: start;
+            gap: 10px;
+        }
+
+        .output-icon {
+            color: #0ea5e9;
+            font-size: 1.2em;
+            flex-shrink: 0;
+        }
+
+        .flow-arrow {
+            text-align: center;
+            font-size: 2em;
+            color: var(--color-primary);
+            margin: 10px 0;
+        }
+
+        .info-badge {
+            display: inline-block;
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #fef3c7 0%, #fde68a 100%);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        ul {
+            margin: 12px 0;
+            padding-left: 24px;
+        }
+
+        ul li {
+            margin: 8px 0;
+            color: var(--color-text);
+        }
+
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .tech-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .tech-title {
+            font-weight: 600;
+            color: var(--color-primary);
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .step-content {
+                margin-left: 0;
+            }
+
+            .field-name {
+                display: block;
+                min-width: auto;
+                margin-bottom: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏥 MedSentinel</h1>
+            <div class="subtitle">AI Platform for Affordable Healthcare &amp; Government Support</div>
+            <div class="subtitle" style="font-size: 1em; margin-top: 10px; opacity: 0.85;">Complete User Workflow Guide</div>
+        </header>
+
+        <div class="workflow-container">
+            <!-- Step 1: Landing & Onboarding -->
+            <div class="workflow-step">
+                <div class="step-header">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Landing Page &amp; Registration</div>
+                </div>
+                <div class="step-content">
+                    <p><strong>User Action:</strong> Patient/family member visits MedSentinel platform</p>
+                    
+                    <div class="section-label">📝 Initial Input Required:</div>
+                    <div class="detail-box">
+                        <div class="detail-item">
+                            <span class="field-name">Account Creation</span>
+                            <span class="field-desc">(Optional) - Email, Password for saving searches</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="field-name">Guest Mode</span>
+                            <span class="field-desc">Skip registration, proceed directly to search</span>
+                        </div>
+                    </div>
+
+                    <div class="section-label">🎯 What User Sees:</div>
+                    <ul>
+                        <li>Welcome message explaining platform purpose</li>
+                        <li>Quick overview of features (compare costs, find schemes, get recommendations)</li>
+                        <li>Call-to-action button: <span class="highlight">"Find Affordable Healthcare"</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="flow-arrow">↓</div>
+
+            <!-- Step 2: Medical Condition Input -->
+            <div class="workflow-step">
+                <div class="step-header">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Medical Condition Search</div>
+                </div>
+                <div class="step-content">
+                    <p><strong>User Action:</strong> Enter medical condition or treatment needed</p>
+                    
+                    <div class="section-label">📝 Required Input:</div>
+                    <div class="detail-box">
+                        <div class="detail-item">
+                            <span class="field-name">Medical Condition/Procedure</span>
+                            <span class="field-desc">e.g., "Heart Surgery", "Diabetes Treatment", "Cancer Chemotherapy", "Kidney Stone Removal"</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="field-name">Location Preference</span>
+                            <span class="field-desc">City or State (e.g., Bengaluru, Karnataka)</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="field-name">Treatment Urgency</span>
+                            <span class="field-desc">Emergency / Scheduled / Flexible</span>
+                        </div>
+                    </div>
+
+                    <div class="section-label">🎯 What User Sees:</div>
+                    <ul>
+                        <li>Auto-suggest dropdown with common medical conditions</li>
+                        <li>Search bar with AI-powered natural language understanding</li>
+                        <li>Location selector with nearby cities</li>
+                        <li>Loading indicator while AI processes request</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="flow-arrow">↓</div>
+
+            <!-- Step 3: Personal Details -->
+            <div class="workflow-step">
+                <div class="step-header">
+                    <div class="step-number">3</div>
+                    <div class="step-title">Patient Profile Details</div>
+                </div>
+                <div class="step-content">
+                    <p><strong>User Action:</strong> Provide personal information for government scheme eligibility check</p>
+                    
+                    <div class="section-label">📝 Required Input:</div>
+                    <div class="detail-box">
+                        <div class="detail-item">
+                            <span class="field-name">Full Name</span>
+                            <span class="field-desc">Patient's legal name</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="field-name">Age</span>
+                            <span class="field-desc">Patient's current age</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="field-name">Gender</span>
+                            <span class="field-desc">Male / Female / Other</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="field-name">Income Category</span>
+                            <span class="field-desc">Below Poverty Line (BPL) / Above Poverty Line (APL) / Annual Income Range</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="field-name">State of Residence</span>
+                            <span class="field-desc">For state-specific schemes</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="field-name">Aadhaar Number</span>
+                            <span class="field-desc">(Optional but recommended) - For Ayushman Bharat eligibility</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="field-name">Existing Health Card</span>
+                            <span class="field-desc">Ayushman Bharat card number if already enrolled</span>
+                        </div>
+                    </div>
+
+                    <div class="section-label">🎯 What User Sees:</div>
+                    <ul>
+                        <li>Form with clear field labels and validation</li>
+                        <li>Privacy assurance message</li>
+                        <li>Progress indicator showing "Step 2 of 3"</li>
+                        <li>Option to skip optional fields</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="flow-arrow">↓</div>
+
+            <!-- Step 4: AI Processing -->
+            <div class="workflow-step" style="border-left-color: #8b5cf6;">
+                <div class="step-header">
+                    <div class="step-number" style="background: #8b5cf6;">4</div>
+                    <div class="step-title">AI Analysis &amp; Processing</div>
+                </div>
+                <div class="step-content">
+                    <p><strong>System Action:</strong> AI agent processes data in the background</p>
+                    
+                    <div class="section-label">🤖 Backend Operations:</div>
+                    <ul>
+                        <li><strong>Data Collection:</strong> Fetch treatment costs from healthcare databases and hospital APIs</li>
+                        <li><strong>Price Analysis:</strong> AI compares costs across multiple hospitals for the specified treatment</li>
+                        <li><strong>Scheme Matching:</strong> AI checks eligibility for government healthcare schemes based on patient profile</li>
+                        <li><strong>Recommendation Generation:</strong> GPT-4 or Claude AI generates personalized recommendations</li>
+                    </ul>
+
+                    <div class="section-label">🎯 What User Sees:</div>
+                    <ul>
+                        <li>Loading screen with progress messages ("Analyzing treatment costs...", "Checking scheme eligibility...", "Generating recommendations...")</li>
+                        <li>Estimated wait time: 10-15 seconds</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="flow-arrow">↓</div>
+
+            <!-- Step 5: Results Display -->
+            <div class="workflow-step" style="border-left-color: #10b981;">
+                <div class="step-header">
+                    <div class="step-number" style="background: #10b981;">5</div>
+                    <div class="step-title">Results Dashboard</div>
+                </div>
+                <div class="step-content">
+                    <p><strong>System Output:</strong> Comprehensive results displayed in organized sections</p>
+                    
+                    <div class="section-label">📊 Section 1: Hospital Cost Comparison</div>
+                    <div class="output-box">
+                        <div class="output-item">
+                            <span class="output-icon">🏥</span>
+                            <div>
+                                <strong>List of Hospitals</strong> - Sorted by cost (lowest to highest)
+                                <ul style="margin-top: 8px;">
+                                    <li>Hospital Name &amp; Address</li>
+                                    <li>Estimated Treatment Cost (with breakdown)</li>
+                                    <li>Distance from patient location</li>
+                                    <li>Hospital rating &amp; patient reviews</li>
+                                    <li>Available specialties &amp; facilities</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="output-item">
+                            <span class="output-icon">💰</span>
+                            <div>
+                                <strong>Cost Breakdown</strong> - Transparent pricing
+                                <ul style="margin-top: 8px;">
+                                    <li>Consultation fees</li>
+                                    <li>Procedure/surgery costs</li>
+                                    <li>Medication expenses</li>
+                                    <li>Hospital stay charges</li>
+                                    <li>Additional tests/diagnostics</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-label">🎁 Section 2: Government Scheme Eligibility</div>
+                    <div class="output-box">
+                        <div class="output-item">
+                            <span class="output-icon">✅</span>
+                            <div>
+                                <strong>Eligible Schemes</strong> - Programs patient qualifies for
+                                <ul style="margin-top: 8px;">
+                                    <li><strong>Ayushman Bharat (PM-JAY):</strong> Coverage amount, eligibility status, enrollment status</li>
+                                    <li><strong>State Health Schemes:</strong> Karnataka-specific programs like Vajpayee Arogya Shree, Yeshasvini</li>
+                                    <li><strong>Central Government Schemes:</strong> CGHS, ESI, ECHS (if applicable)</li>
+                                    <li><strong>Financial Support Amount:</strong> How much coverage/subsidy available</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="output-item">
+                            <span class="output-icon">📋</span>
+                            <div>
+                                <strong>How to Apply</strong> - Step-by-step guidance
+                                <ul style="margin-top: 8px;">
+                                    <li>Documents required for enrollment</li>
+                                    <li>Application process (online/offline)</li>
+                                    <li>Official website links</li>
+                                    <li>Helpline numbers</li>
+                                    <li>Application timeline</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-label">⭐ Section 3: AI Recommendations</div>
+                    <div class="output-box" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-color: #10b981;">
+                        <div class="output-item">
+                            <span class="output-icon" style="color: #10b981;">🎯</span>
+                            <div>
+                                <strong>Top Recommended Option</strong>
+                                <ul style="margin-top: 8px;">
+                                    <li>Most affordable hospital + government scheme combination</li>
+                                    <li>Estimated <span class="highlight">out-of-pocket cost after subsidies</span></li>
+                                    <li>Why this option is recommended (AI explanation)</li>
+                                    <li>Potential savings compared to average cost</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="output-item">
+                            <span class="output-icon" style="color: #10b981;">📍</span>
+                            <div>
+                                <strong>Alternative Options</strong>
+                                <ul style="margin-top: 8px;">
+                                    <li>2-3 backup hospital recommendations</li>
+                                    <li>Quality vs cost trade-offs explained</li>
+                                    <li>Special considerations (emergency facilities, specialist availability)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-label">📄 Section 4: Next Steps</div>
+                    <div class="detail-box">
+                        <ul>
+                            <li><strong>Download Report:</strong> PDF with complete cost comparison &amp; scheme details</li>
+                            <li><strong>Contact Hospitals:</strong> Direct call/email buttons for shortlisted hospitals</li>
+                            <li><strong>Apply for Schemes:</strong> Links to government portals with pre-filled application data</li>
+                            <li><strong>Save for Later:</strong> Bookmark results to registered account</li>
+                            <li><strong>Share Results:</strong> Send via email/WhatsApp to family members</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flow-arrow">↓</div>
+
+            <!-- Step 6: Follow-up Actions -->
+            <div class="workflow-step" style="border-left-color: #f59e0b;">
+                <div class="step-header">
+                    <div class="step-number" style="background: #f59e0b;">6</div>
+                    <div class="step-title">User Actions &amp; Follow-up</div>
+                </div>
+                <div class="step-content">
+                    <div class="section-label">✅ Patient Can Now:</div>
+                    <div class="detail-box">
+                        <div class="detail-item">
+                            <span class="field-name">📞 Contact Hospital</span>
+                            <span class="field-desc">Call recommended hospital to book appointment</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="field-name">📝 Apply for Scheme</span>
+                            <span class="field-desc">Follow AI-generated guidance to enroll in government programs</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="field-name">💾 Save Search</span>
+                            <span class="field-desc">Store results for future reference</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="field-name">🔄 Refine Search</span>
+                            <span class="field-desc">Modify criteria (location, urgency) and re-run analysis</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="field-name">💬 Get Support</span>
+                            <span class="field-desc">Chat with AI assistant for clarifications</span>
+                        </div>
+                    </div>
+
+                    <div class="section-label">🔔 Optional Features:</div>
+                    <ul>
+                        <li><strong>Price Alerts:</strong> Notify if costs drop for saved searches</li>
+                        <li><strong>Scheme Updates:</strong> Alert when new government programs launch</li>
+                        <li><strong>Document Upload:</strong> Upload existing medical reports for more accurate recommendations</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technical Architecture -->
+        <div class="workflow-step" style="margin-top: 40px; border-left-color: #6366f1;">
+            <div class="step-header">
+                <div class="step-number" style="background: #6366f1;">🔧</div>
+                <div class="step-title">Technical Implementation Flow</div>
+            </div>
+            <div class="step-content">
+                <div class="section-label">Backend Workflow:</div>
+                <div class="detail-box">
+                    <div class="detail-item">
+                        <strong>1. User Input → FastAPI Backend</strong><br>
+                        <span class="field-desc">Next.js frontend sends request to FastAPI server</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>2. LangChain Agent Orchestration</strong><br>
+                        <span class="field-desc">LangChain coordinates multiple AI tasks (data retrieval, analysis, recommendation)</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>3. Data Sources Query</strong><br>
+                        <span class="field-desc">Fetch data from healthcare datasets, NHA portals, India API Setu</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>4. GPT-4/Claude Analysis</strong><br>
+                        <span class="field-desc">AI model processes data and generates insights</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>5. Database Storage</strong><br>
+                        <span class="field-desc">Store results in MongoDB/PostgreSQL for user retrieval</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>6. Response to Frontend</strong><br>
+                        <span class="field-desc">Send formatted results to Next.js for display</span>
+                    </div>
+                </div>
+
+                <div class="section-label">Tech Stack:</div>
+                <div class="tech-stack">
+                    <div class="tech-card">
+                        <div class="tech-title">Frontend</div>
+                        Next.js
+                    </div>
+                    <div class="tech-card">
+                        <div class="tech-title">Backend</div>
+                        FastAPI + Python
+                    </div>
+                    <div class="tech-card">
+                        <div class="tech-title">AI Layer</div>
+                        LangChain + GPT-4/Claude
+                    </div>
+                    <div class="tech-card">
+                        <div class="tech-title">Database</div>
+                        MongoDB or PostgreSQL
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Features Summary -->
+        <div class="workflow-step" style="margin-top: 40px; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #fcd34d 100%); border-left-color: #f59e0b;">
+            <div class="step-header">
+                <div class="step-number" style="background: #f59e0b;">💡</div>
+                <div class="step-title">Key Deliverables Summary</div>
+            </div>
+            <div class="step-content">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+                    <div>
+                        <strong>✅ Cost Transparency</strong>
+                        <p style="margin-top: 8px; color: var(--color-text-muted);">Compare treatment prices across hospitals with detailed breakdowns</p>
+                    </div>
+                    <div>
+                        <strong>✅ Scheme Discovery</strong>
+                        <p style="margin-top: 8px; color: var(--color-text-muted);">Automatic eligibility check for Ayushman Bharat and state schemes</p>
+                    </div>
+                    <div>
+                        <strong>✅ Smart Recommendations</strong>
+                        <p style="margin-top: 8px; color: var(--color-text-muted);">AI suggests best hospital + scheme combinations to minimize costs</p>
+                    </div>
+                    <div>
+                        <strong>✅ Application Guidance</strong>
+                        <p style="margin-top: 8px; color: var(--color-text-muted);">Step-by-step instructions to apply for financial assistance</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Add smooth scroll behavior
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Add animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '0';
+                    entry.target.style.transform = 'translateY(20px)';
+                    entry.target.style.transition = 'opacity 0.5s, transform 0.5s';
+                    
+                    setTimeout(() => {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }, 100);
+                    
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.workflow-step').forEach(step => {
+            observer.observe(step);
+        });
+    </script>
+</body>
+</html>

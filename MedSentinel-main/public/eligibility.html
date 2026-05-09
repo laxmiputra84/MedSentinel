@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eligibility Check - MedSentinel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .material-symbols-rounded { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+    <!-- Navigation -->
+    <nav class="bg-black/50 backdrop-blur-xl border-b border-white/10 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="/" class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <span class="material-symbols-rounded text-white text-xl">health_and_safety</span>
+                    </div>
+                    <span class="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">MedSentinel</span>
+                </a>
+                <div class="flex items-center space-x-3">
+                    <a href="/" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white">Home</a>
+                    <a href="/schemes.html" class="px-4 py-2 text-sm font-medium text-blue-400">Schemes</a>
+                    <button onclick="logout()" class="px-3 py-2 text-sm font-medium text-white bg-red-600/80 hover:bg-red-700 rounded-lg transition-all flex items-center space-x-1">
+                        <span class="material-symbols-rounded text-sm">logout</span>
+                        <span class="hidden sm:inline">Logout</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Progress Bar -->
+        <div class="mb-12">
+            <div class="flex justify-between items-center mb-4">
+                <span class="text-sm font-semibold text-blue-400">Step 3 of 4: Household Details</span>
+                <span class="text-sm font-medium text-gray-400">75% Complete</span>
+            </div>
+            <div class="h-2 w-full bg-white/10 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-blue-500 to-purple-500 w-3/4 rounded-full transition-all duration-500"></div>
+            </div>
+        </div>
+
+        <!-- AI Status -->
+        <div class="flex items-center gap-3 mb-10 px-6 py-3 bg-blue-500/20 border border-blue-500/30 rounded-full w-fit mx-auto backdrop-blur-xl">
+            <span class="relative flex h-3 w-3">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
+            </span>
+            <span class="text-sm font-bold text-blue-400 tracking-wide uppercase">AI is analyzing your eligibility...</span>
+        </div>
+
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-5xl font-extrabold mb-4 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                Tell us about your household
+            </h1>
+            <p class="text-gray-400 text-lg max-w-xl mx-auto">This helps our AI identify specific government schemes you might qualify for.</p>
+        </div>
+
+        <!-- Form -->
+        <form id="eligibilityForm" class="space-y-6">
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Family Size -->
+                <div class="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl p-8 rounded-2xl border border-white/10 hover:border-blue-500/30 transition-all">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                            <span class="material-symbols-rounded text-white text-3xl">groups</span>
+                        </div>
+                        <h3 class="text-xl font-bold">Family Size</h3>
+                    </div>
+                    <div class="grid grid-cols-3 gap-3">
+                        <button type="button" onclick="selectFamily('1-2')" class="family-btn p-4 rounded-xl border-2 border-white/10 hover:border-blue-500 text-center transition-all">
+                            <span class="text-xl font-bold block">1-2</span>
+                            <span class="text-xs uppercase text-gray-400">Small</span>
+                        </button>
+                        <button type="button" onclick="selectFamily('3-5')" class="family-btn p-4 rounded-xl border-2 border-white/10 hover:border-blue-500 text-center transition-all">
+                            <span class="text-xl font-bold block">3-5</span>
+                            <span class="text-xs uppercase text-gray-400">Medium</span>
+                        </button>
+                        <button type="button" onclick="selectFamily('6+')" class="family-btn p-4 rounded-xl border-2 border-white/10 hover:border-blue-500 text-center transition-all">
+                            <span class="text-xl font-bold block">6+</span>
+                            <span class="text-xs uppercase text-gray-400">Large</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Location -->
+                <div class="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl p-8 rounded-2xl border border-white/10 hover:border-blue-500/30 transition-all">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
+                            <span class="material-symbols-rounded text-white text-3xl">map</span>
+                        </div>
+                        <h3 class="text-xl font-bold">Location Type</h3>
+                    </div>
+                    <div class="flex gap-4">
+                        <button type="button" onclick="selectLocation('urban')" class="location-btn flex-1 p-4 rounded-xl border-2 border-white/10 hover:border-blue-500 flex items-center gap-3 transition-all">
+                            <span class="material-symbols-rounded">location_city</span>
+                            <span class="font-bold">Urban</span>
+                        </button>
+                        <button type="button" onclick="selectLocation('rural')" class="location-btn flex-1 p-4 rounded-xl border-2 border-white/10 hover:border-blue-500 flex items-center gap-3 transition-all">
+                            <span class="material-symbols-rounded">nature_people</span>
+                            <span class="font-bold">Rural</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Income -->
+            <div class="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl p-8 rounded-2xl border border-white/10">
+                <h3 class="text-xl font-bold mb-4">Annual Household Income</h3>
+                <div class="flex flex-wrap gap-3">
+                    <button type="button" onclick="selectIncome('low')" class="income-btn px-6 py-3 rounded-xl bg-white/5 border-2 border-white/10 hover:border-blue-500 font-medium transition-all">Low (< ₹3L)</button>
+                    <button type="button" onclick="selectIncome('middle')" class="income-btn px-6 py-3 rounded-xl bg-white/5 border-2 border-white/10 hover:border-blue-500 font-medium transition-all">Middle (₹3L - ₹12L)</button>
+                    <button type="button" onclick="selectIncome('high')" class="income-btn px-6 py-3 rounded-xl bg-white/5 border-2 border-white/10 hover:border-blue-500 font-medium transition-all">High (> ₹12L)</button>
+                </div>
+            </div>
+
+            <!-- Conditions -->
+            <div class="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl p-8 rounded-2xl border border-white/10">
+                <h3 class="text-xl font-bold mb-4">Pre-existing Conditions?</h3>
+                <div class="flex flex-wrap gap-3">
+                    <label class="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/10 cursor-pointer hover:bg-white/5 transition-all">
+                        <input type="checkbox" name="conditions" value="Diabetes" class="rounded bg-white/10 border-white/20">
+                        <span class="text-sm font-semibold">Diabetes</span>
+                    </label>
+                    <label class="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/10 cursor-pointer hover:bg-white/5 transition-all">
+                        <input type="checkbox" name="conditions" value="Hypertension" class="rounded bg-white/10 border-white/20">
+                        <span class="text-sm font-semibold">Hypertension</span>
+                    </label>
+                    <label class="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/10 cursor-pointer hover:bg-white/5 transition-all">
+                        <input type="checkbox" name="conditions" value="Cardiac" class="rounded bg-white/10 border-white/20">
+                        <span class="text-sm font-semibold">Cardiac Care</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex justify-between items-center mt-12">
+                <a href="/schemes.html" class="px-10 py-4 rounded-xl border-2 border-white/10 font-bold hover:bg-white/5 transition-all">Back</a>
+                <button type="submit" class="px-12 py-5 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold text-lg shadow-xl hover:shadow-blue-500/50 transition-all">
+                    Analyze Eligibility
+                </button>
+            </div>
+        </form>
+
+        <div id="results" class="hidden mt-16 bg-gradient-to-br from-green-500/20 to-emerald-500/20 backdrop-blur-xl p-10 rounded-2xl border-2 border-green-500/30"></div>
+    </main>
+
+    <script>
+        let formData = { familySize: '', location: '', income: '' };
+
+        function selectFamily(size) {
+            formData.familySize = size;
+            document.querySelectorAll('.family-btn').forEach(btn => btn.classList.remove('border-blue-500', 'bg-blue-500/20'));
+            event.target.closest('button').classList.add('border-blue-500', 'bg-blue-500/20');
+        }
+
+        function selectLocation(loc) {
+            formData.location = loc;
+            document.querySelectorAll('.location-btn').forEach(btn => btn.classList.remove('border-blue-500', 'bg-blue-500/20'));
+            event.target.closest('button').classList.add('border-blue-500', 'bg-blue-500/20');
+        }
+
+        function selectIncome(inc) {
+            formData.income = inc;
+            document.querySelectorAll('.income-btn').forEach(btn => btn.classList.remove('border-blue-500', 'bg-blue-500/20'));
+            event.target.classList.add('border-blue-500', 'bg-blue-500/20');
+        }
+
+        document.getElementById('eligibilityForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const conditions = Array.from(document.querySelectorAll('input[name="conditions"]:checked')).map(cb => cb.value);
+            
+            try {
+                const response = await fetch('/api/eligibility-check', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ...formData, conditions })
+                });
+                
+                const result = await response.json();
+                
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.classList.remove('hidden');
+                resultsDiv.innerHTML = `
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-green-500/20 text-green-400 rounded-full flex items-center justify-center mx-auto mb-6 border-2 border-green-500/30">
+                            <span class="material-symbols-rounded text-5xl">celebration</span>
+                        </div>
+                        <h2 class="text-3xl font-extrabold mb-4 text-white">Congratulations! You are eligible for ${result.eligible.length} schemes</h2>
+                    </div>
+                    ${result.eligible.map(e => `
+                        <div class="bg-white/5 p-6 rounded-xl mb-4 border border-white/10">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h3 class="text-xl font-bold text-white">${e.scheme}</h3>
+                                    <p class="text-sm text-gray-400">Probability: ${e.probability}%</p>
+                                </div>
+                                <a href="/schemes.html" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl font-bold hover:shadow-lg hover:shadow-blue-500/50 transition-all">Apply Now</a>
+                            </div>
+                        </div>
+                    `).join('')}
+                `;
+                
+                resultsDiv.scrollIntoView({ behavior: 'smooth' });
+            } catch (error) {
+                console.error('Error checking eligibility:', error);
+            }
+        });
+    </script>
+    <script src="/js/main.js"></script>
+</body>
+</html>

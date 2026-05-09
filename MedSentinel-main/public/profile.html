@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - MedSentinel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .material-symbols-rounded { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+    <!-- Navigation -->
+    <nav class="bg-black/50 backdrop-blur-xl border-b border-white/10 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="/" class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <span class="material-symbols-rounded text-white text-xl">health_and_safety</span>
+                    </div>
+                    <span class="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">MedSentinel</span>
+                </a>
+                <div class="flex items-center space-x-3">
+                    <a href="/" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white">Home</a>
+                    <a href="/hospitals.html" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white">Hospitals</a>
+                    <a href="/schemes.html" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white">Schemes</a>
+                    <a href="/insurances.html" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white">Insurance</a>                    <button onclick="showLocation()" class="p-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all">
+                        <span class="material-symbols-rounded">my_location</span>
+                    </button>                    <button onclick="logout()" class="px-3 py-2 text-sm font-medium text-white bg-red-600/80 hover:bg-red-700 rounded-lg transition-all flex items-center space-x-1">
+                        <span class="material-symbols-rounded text-sm">logout</span>
+                        <span class="hidden sm:inline">Logout</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Profile Header -->
+        <header class="flex flex-col md:flex-row items-center justify-between gap-8 mb-16">
+            <div class="flex items-center gap-6">
+                <div class="relative">
+                    <div id="userInitials" class="w-32 h-32 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 border-4 border-white/10 flex items-center justify-center text-4xl font-bold shadow-2xl shadow-blue-500/30">
+                        U
+                    </div>
+                    <div class="absolute bottom-1 right-1 bg-green-500 text-white p-2 rounded-full shadow-lg border-2 border-gray-900">
+                        <span class="material-symbols-rounded text-sm">verified</span>
+                    </div>
+                </div>
+                <div>
+                    <h1 id="userName" class="text-4xl font-extrabold mb-2 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">User</h1>
+                    <div class="flex flex-wrap gap-3">
+                        <span class="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-lg text-xs font-bold border border-blue-500/30">Patient ID: MS-99201</span>
+                        <span id="locationBadge" class="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-lg text-xs font-bold border border-blue-500/30">Bengaluru, Karnataka</span>
+                        <span class="bg-green-500/20 text-green-400 px-3 py-1 rounded-lg text-xs font-bold border border-green-500/30">Ayushman Bharat Active</span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex gap-3">
+                <button onclick="editProfile()" class="flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/10 font-semibold rounded-xl hover:bg-white/10 transition-all">
+                    <span class="material-symbols-rounded">edit</span> Edit Profile
+                </button>
+                <button onclick="logout()" class="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-red-500/50 transition-all">
+                    <span class="material-symbols-rounded">logout</span> Logout
+                </button>
+            </div>
+        </header>
+
+        <div class="grid md:grid-cols-12 gap-6">
+            <!-- Sidebar -->
+            <div class="md:col-span-4 space-y-6">
+                <div class="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl p-8 rounded-2xl border border-white/10">
+                    <h3 class="text-lg font-bold mb-6 flex items-center gap-2">
+                        <span class="material-symbols-rounded text-green-400">security</span>
+                        Medical Identity
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-white/5 rounded-xl border border-white/10">
+                            <p class="text-xs text-gray-400 font-medium uppercase mb-1">Blood Group</p>
+                            <p id="bloodGroup" class="text-xl font-bold">O Positive (O+)</p>
+                        </div>
+                        <div class="p-4 bg-white/5 rounded-xl border border-white/10">
+                            <p class="text-xs text-gray-400 font-medium uppercase mb-1">Allergies</p>
+                            <p id="allergies" class="text-md font-bold text-red-400">Penicillin, Peanuts</p>
+                        </div>
+                        <div class="p-4 bg-white/5 rounded-xl border border-white/10">
+                            <p class="text-xs text-gray-400 font-medium uppercase mb-1">Emergency Contact</p>
+                            <p id="emergencyContact" class="text-md font-bold">+91 98765-43210</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-blue-500/20 to-purple-500/20 backdrop-blur-xl p-8 rounded-2xl border border-blue-500/30">
+                    <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+                        <span class="material-symbols-rounded">account_balance_wallet</span>
+                        Scheme Eligibility
+                    </h3>
+                    <p class="text-sm text-gray-300 mb-6">You are currently eligible for 4 high-priority government health schemes.</p>
+                    <a href="/schemes.html" class="block w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl text-center hover:shadow-lg hover:shadow-blue-500/50 transition-all">View All Schemes</a>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="md:col-span-8 space-y-6">
+                <div class="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl rounded-2xl border border-white/10">
+                    <div class="flex border-b border-white/10">
+                        <button onclick="showTab('saved')" class="tab-btn px-8 py-5 text-blue-400 border-b-2 border-blue-500 font-bold text-sm">Saved Hospitals</button>
+                        <button onclick="showTab('schemes')" class="tab-btn px-8 py-5 text-gray-400 font-semibold text-sm hover:text-white">Saved Schemes</button>
+                        <button onclick="showTab('insurance')" class="tab-btn px-8 py-5 text-gray-400 font-semibold text-sm hover:text-white">Insurance</button>
+                        <button onclick="showTab('claims')" class="tab-btn px-8 py-5 text-gray-400 font-semibold text-sm hover:text-white">Claims</button>
+                        <button onclick="showTab('history')" class="tab-btn px-8 py-5 text-gray-400 font-semibold text-sm hover:text-white">Search History</button>
+                    </div>
+                    <div class="p-8">
+                        <div id="savedHospitals" class="tab-content">
+                            <div id="savedList" class="grid sm:grid-cols-2 gap-4"></div>
+                        </div>
+                        <div id="savedSchemes" class="tab-content hidden">
+                            <p class="text-gray-400">No saved schemes yet.</p>
+                        </div>
+                        <div id="insurance" class="tab-content hidden">
+                            <div class="flex justify-between items-center mb-6">
+                                <h3 class="text-lg font-bold">My Insurance Plans</h3>
+                                <a href="/insurances.html" class="px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white font-semibold rounded-lg text-sm hover:shadow-lg transition-all">Browse Plans</a>
+                            </div>
+                            <div id="insuranceList" class="space-y-4"></div>
+                        </div>
+                        <div id="claims" class="tab-content hidden">
+                            <div class="flex justify-between items-center mb-6">
+                                <h3 class="text-lg font-bold">Insurance Claims</h3>
+                                <a href="#" onclick="goToClaimSubmission()" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-lg text-sm hover:shadow-lg transition-all">File Claim</a>
+                            </div>
+                            <div id="claimsList" class="space-y-4"></div>
+                        </div>
+                        <div id="searchHistory" class="tab-content hidden">
+                            <p class="text-gray-400">No search history available.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl p-8 rounded-2xl border border-white/10">
+                    <div class="flex justify-between items-center mb-8">
+                        <div>
+                            <h3 class="text-lg font-bold">My Documents</h3>
+                            <p class="text-xs text-gray-400">Upload your Aadhaar, DOB certificate and one other document</p>
+                        </div>
+                    </div>
+                    <div class="grid sm:grid-cols-3 gap-4">
+                        <div class="p-5 bg-white/5 border border-white/10 rounded-3xl">
+                            <div class="flex items-center gap-3 mb-4">
+                                <span class="material-symbols-rounded text-blue-400 text-3xl">badge</span>
+                                <div>
+                                    <h4 class="font-bold">Aadhaar Card</h4>
+                                    <p id="aadhaarStatus" class="text-xs text-gray-400">No document uploaded yet</p>
+                                </div>
+                            </div>
+                            <input id="aadhaarFile" type="file" accept=".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx" class="hidden" onchange="handleDocumentSelection('aadhaar')">
+                            <button type="button" onclick="openDocumentPicker('aadhaar')" class="w-full mb-3 px-4 py-3 rounded-2xl bg-blue-600 text-white font-semibold hover:bg-blue-500 transition-all">Choose Aadhaar</button>
+                            <p id="aadhaarSelectedName" class="text-sm text-gray-300 mb-4 hidden"></p>
+                            <button id="aadhaarUploadBtn" type="button" onclick="uploadDocumentType('aadhaar')" disabled class="w-full px-4 py-3 rounded-2xl bg-white/10 text-gray-300 font-semibold hover:bg-white/20 transition-all">Upload Aadhaar</button>
+                            <a id="aadhaarViewBtn" href="#" target="_blank" class="hidden w-full mt-3 inline-flex items-center justify-center px-4 py-3 rounded-2xl bg-green-600 text-white font-semibold hover:bg-green-500 transition-all">View Aadhaar</a>
+                        </div>
+                        <div class="p-5 bg-white/5 border border-white/10 rounded-3xl">
+                            <div class="flex items-center gap-3 mb-4">
+                                <span class="material-symbols-rounded text-blue-400 text-3xl">perm_contact_calendar</span>
+                                <div>
+                                    <h4 class="font-bold">DOB Certificate</h4>
+                                    <p id="dobStatus" class="text-xs text-gray-400">No document uploaded yet</p>
+                                </div>
+                            </div>
+                            <input id="dobFile" type="file" accept=".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx" class="hidden" onchange="handleDocumentSelection('dob')">
+                            <button type="button" onclick="openDocumentPicker('dob')" class="w-full mb-3 px-4 py-3 rounded-2xl bg-blue-600 text-white font-semibold hover:bg-blue-500 transition-all">Choose DOB</button>
+                            <p id="dobSelectedName" class="text-sm text-gray-300 mb-4 hidden"></p>
+                            <button id="dobUploadBtn" type="button" onclick="uploadDocumentType('dob')" disabled class="w-full px-4 py-3 rounded-2xl bg-white/10 text-gray-300 font-semibold hover:bg-white/20 transition-all">Upload DOB</button>
+                            <a id="dobViewBtn" href="#" target="_blank" class="hidden w-full mt-3 inline-flex items-center justify-center px-4 py-3 rounded-2xl bg-green-600 text-white font-semibold hover:bg-green-500 transition-all">View DOB</a>
+                        </div>
+                        <div class="p-5 bg-white/5 border border-white/10 rounded-3xl">
+                            <div class="flex items-center gap-3 mb-4">
+                                <span class="material-symbols-rounded text-blue-400 text-3xl">description</span>
+                                <div>
+                                    <h4 class="font-bold">Other Document</h4>
+                                    <p id="otherStatus" class="text-xs text-gray-400">No document uploaded yet</p>
+                                </div>
+                            </div>
+                            <input id="otherFile" type="file" accept=".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx" class="hidden" onchange="handleDocumentSelection('other')">
+                            <button type="button" onclick="openDocumentPicker('other')" class="w-full mb-3 px-4 py-3 rounded-2xl bg-blue-600 text-white font-semibold hover:bg-blue-500 transition-all">Choose Document</button>
+                            <p id="otherSelectedName" class="text-sm text-gray-300 mb-4 hidden"></p>
+                            <button id="otherUploadBtn" type="button" onclick="uploadDocumentType('other')" disabled class="w-full px-4 py-3 rounded-2xl bg-white/10 text-gray-300 font-semibold hover:bg-white/20 transition-all">Upload Document</button>
+                            <a id="otherViewBtn" href="#" target="_blank" class="hidden w-full mt-3 inline-flex items-center justify-center px-4 py-3 rounded-2xl bg-green-600 text-white font-semibold hover:bg-green-500 transition-all">View Document</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        async function loadSavedHospitals() {
+            try {
+                const response = await fetch('/api/saved-items/1');
+                const hospitals = await response.json();
+                
+                document.getElementById('savedList').innerHTML = hospitals.map(h => `
+                    <div class="bg-white/5 p-5 rounded-xl border border-white/10 hover:border-blue-500/50 cursor-pointer transition-all">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                                <span class="material-symbols-rounded text-white text-2xl">local_hospital</span>
+                            </div>
+                            <button onclick="removeSaved(${h.id})" class="text-red-400 hover:text-red-300">
+                                <span class="material-symbols-rounded">bookmark_remove</span>
+                            </button>
+                        </div>
+                        <h4 class="font-bold mb-1">${h.name}</h4>
+                        <p class="text-xs text-gray-400 mb-3">${h.location}</p>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold text-green-400 flex items-center gap-0.5">
+                                <span class="material-symbols-rounded text-sm">star</span> ${h.rating}
+                            </span>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading saved hospitals:', error);
+            }
+        }
+
+        function showTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('text-blue-400', 'border-b-2', 'border-blue-500');
+                b.classList.add('text-gray-400');
+            });
+            
+            const tabMap = {
+                'saved': 'savedHospitals',
+                'schemes': 'savedSchemes',
+                'insurance': 'insurance',
+                'claims': 'claims',
+                'history': 'searchHistory'
+            };
+            
+            if (tabMap[tab]) {
+                document.getElementById(tabMap[tab]).classList.remove('hidden');
+                if (tab === 'insurance') {
+                    loadUserInsurancesDisplay();
+                } else if (tab === 'claims') {
+                    loadUserClaimsDisplay();
+                }
+            }
+            
+            event.target.classList.add('text-blue-400', 'border-b-2', 'border-blue-500');
+            event.target.classList.remove('text-gray-400');
+        }
+
+        async function removeSaved(hospitalId) {
+            try {
+                await fetch(`/api/saved-items/1/${hospitalId}`, { method: 'DELETE' });
+                loadSavedHospitals();
+            } catch (error) {
+                console.error('Error removing hospital:', error);
+            }
+        }
+
+        function updateProfileDisplay() {
+            const userName = localStorage.getItem('userName') || 'User';
+            const bloodGroup = localStorage.getItem('profileBloodGroup') || 'O Positive (O+)';
+            const allergies = localStorage.getItem('profileAllergies') || 'Penicillin, Peanuts';
+            const emergencyContact = localStorage.getItem('profileEmergencyContact') || '+91 98765-43210';
+            const state = localStorage.getItem('profileState') || 'Karnataka';
+            const city = localStorage.getItem('profileCity') || 'Bengaluru';
+
+            document.getElementById('userName').textContent = userName;
+            document.getElementById('bloodGroup').textContent = bloodGroup;
+            document.getElementById('allergies').textContent = allergies;
+            document.getElementById('emergencyContact').textContent = emergencyContact;
+            document.getElementById('locationBadge').textContent = `${city}, ${state}`;
+
+            const initials = userName.split(' ').map(word => word[0]).join('').toUpperCase().slice(0, 2);
+            document.getElementById('userInitials').textContent = initials || 'U';
+        }
+
+        function editProfile() {
+            if (document.getElementById('profileEditModal')) return;
+
+            const profileData = {
+                userName: localStorage.getItem('userName') || 'User',
+                bloodGroup: localStorage.getItem('profileBloodGroup') || 'O Positive (O+)',
+                allergies: localStorage.getItem('profileAllergies') || 'Penicillin, Peanuts',
+                emergencyContact: localStorage.getItem('profileEmergencyContact') || '+91 98765-43210',
+                state: localStorage.getItem('profileState') || 'Karnataka',
+                city: localStorage.getItem('profileCity') || 'Bengaluru',
+                email: localStorage.getItem('profileEmail') || '',
+                phone: localStorage.getItem('profilePhone') || ''
+            };
+
+            const modal = document.createElement('div');
+            modal.id = 'profileEditModal';
+            modal.className = 'fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4';
+            modal.innerHTML = `
+                <div class="w-full max-w-2xl bg-slate-950 rounded-3xl shadow-2xl border border-white/10 overflow-hidden">
+                    <div class="flex items-center justify-between bg-gradient-to-r from-blue-600 to-purple-600 p-5 text-white">
+                        <div>
+                            <h2 class="text-2xl font-bold">Edit Profile</h2>
+                            <p class="text-sm text-blue-100/80">Update your personal details.</p>
+                        </div>
+                        <button id="closeProfileEditor" class="text-white/90 hover:text-white">
+                            <span class="material-symbols-rounded">close</span>
+                        </button>
+                    </div>
+                    <div class="p-6 space-y-5">
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <label class="block text-sm font-semibold text-gray-300">Full Name</label>
+                            <input id="profileNameInput" type="text" value="${profileData.userName}" class="w-full px-4 py-3 rounded-2xl bg-slate-900 border border-white/10 text-white focus:ring-2 focus:ring-blue-500">
+                            <label class="block text-sm font-semibold text-gray-300">Email</label>
+                            <input id="profileEmailInput" type="email" value="${profileData.email}" class="w-full px-4 py-3 rounded-2xl bg-slate-900 border border-white/10 text-white focus:ring-2 focus:ring-blue-500">
+                            <label class="block text-sm font-semibold text-gray-300">Phone</label>
+                            <input id="profilePhoneInput" type="text" value="${profileData.phone}" class="w-full px-4 py-3 rounded-2xl bg-slate-900 border border-white/10 text-white focus:ring-2 focus:ring-blue-500">
+                            <label class="block text-sm font-semibold text-gray-300">Blood Group</label>
+                            <input id="profileBloodGroupInput" type="text" value="${profileData.bloodGroup}" class="w-full px-4 py-3 rounded-2xl bg-slate-900 border border-white/10 text-white focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <label class="block text-sm font-semibold text-gray-300">Allergies</label>
+                            <input id="profileAllergiesInput" type="text" value="${profileData.allergies}" class="w-full px-4 py-3 rounded-2xl bg-slate-900 border border-white/10 text-white focus:ring-2 focus:ring-blue-500">
+                            <label class="block text-sm font-semibold text-gray-300">Emergency Contact</label>
+                            <input id="profileEmergencyInput" type="text" value="${profileData.emergencyContact}" class="w-full px-4 py-3 rounded-2xl bg-slate-900 border border-white/10 text-white focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <label class="block text-sm font-semibold text-gray-300">City</label>
+                            <input id="profileCityInput" type="text" value="${profileData.city}" class="w-full px-4 py-3 rounded-2xl bg-slate-900 border border-white/10 text-white focus:ring-2 focus:ring-blue-500">
+                            <label class="block text-sm font-semibold text-gray-300">State</label>
+                            <input id="profileStateInput" type="text" value="${profileData.state}" class="w-full px-4 py-3 rounded-2xl bg-slate-900 border border-white/10 text-white focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="flex flex-wrap gap-4 justify-end">
+                            <button id="cancelProfileBtn" class="px-6 py-3 rounded-2xl border border-white/10 text-white hover:bg-white/5 transition-all">Cancel</button>
+                            <button id="saveProfileBtn" class="px-6 py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold hover:shadow-lg transition-all">Save Changes</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+
+            modal.querySelector('#closeProfileEditor').addEventListener('click', () => modal.remove());
+            modal.querySelector('#cancelProfileBtn').addEventListener('click', () => modal.remove());
+            modal.querySelector('#saveProfileBtn').addEventListener('click', () => {
+                const userName = document.getElementById('profileNameInput').value.trim() || 'User';
+                localStorage.setItem('userName', userName);
+                localStorage.setItem('profileEmail', document.getElementById('profileEmailInput').value.trim());
+                localStorage.setItem('profilePhone', document.getElementById('profilePhoneInput').value.trim());
+                localStorage.setItem('profileBloodGroup', document.getElementById('profileBloodGroupInput').value.trim());
+                localStorage.setItem('profileAllergies', document.getElementById('profileAllergiesInput').value.trim());
+                localStorage.setItem('profileEmergencyContact', document.getElementById('profileEmergencyInput').value.trim());
+                localStorage.setItem('profileCity', document.getElementById('profileCityInput').value.trim() || 'Bengaluru');
+                localStorage.setItem('profileState', document.getElementById('profileStateInput').value.trim() || 'Karnataka');
+                updateProfileDisplay();
+                modal.remove();
+            });
+        }
+
+        const selectedDocumentFiles = {
+            aadhaar: null,
+            dob: null,
+            other: null
+        };
+
+        function openDocumentPicker(type) {
+            document.getElementById(`${type}File`).click();
+        }
+
+        function handleDocumentSelection(type) {
+            const input = document.getElementById(`${type}File`);
+            const file = input.files[0];
+            const selectedLabel = document.getElementById(`${type}SelectedName`);
+            const uploadBtn = document.getElementById(`${type}UploadBtn`);
+
+            if (!file) {
+                selectedLabel.classList.add('hidden');
+                uploadBtn.disabled = true;
+                selectedDocumentFiles[type] = null;
+                return;
+            }
+
+            selectedDocumentFiles[type] = file;
+            selectedLabel.textContent = `Selected: ${file.name}`;
+            selectedLabel.classList.remove('hidden');
+            uploadBtn.disabled = false;
+        }
+
+        async function uploadDocumentType(type) {
+            const file = selectedDocumentFiles[type];
+            if (!file) {
+                alert('Please select a file before uploading.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('document', file);
+            formData.append('docType', type);
+
+            try {
+                const response = await fetch('/api/upload-document', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+
+                if (!response.ok) {
+                    alert('Upload failed: ' + (result.error || 'Please try again.'));
+                    return;
+                }
+
+                alert('Document uploaded successfully.');
+                selectedDocumentFiles[type] = null;
+                document.getElementById(`${type}SelectedName`).classList.add('hidden');
+                document.getElementById(`${type}UploadBtn`).disabled = true;
+                loadUserDocuments();
+            } catch (error) {
+                console.error('Upload error:', error);
+                alert('Upload failed. Please try again.');
+            }
+        }
+
+        async function loadUserDocuments() {
+            try {
+                const response = await fetch('/api/user-documents/1');
+                const documents = await response.json();
+                const docMap = {
+                    aadhaar: null,
+                    dob: null,
+                    other: null
+                };
+
+                documents.forEach(doc => {
+                    const type = doc.doc_type || 'other';
+                    docMap[type] = doc;
+                });
+
+                updateDocumentCard('aadhaar', docMap.aadhaar, 'Aadhaar Card');
+                updateDocumentCard('dob', docMap.dob, 'DOB Certificate');
+                updateDocumentCard('other', docMap.other, 'Other Document');
+            } catch (error) {
+                console.error('Error loading documents:', error);
+            }
+        }
+
+        function updateDocumentCard(type, doc, label) {
+            const status = document.getElementById(`${type}Status`);
+            const uploadBtn = document.getElementById(`${type}UploadBtn`);
+            const viewBtn = document.getElementById(`${type}ViewBtn`);
+
+            if (doc) {
+                status.innerHTML = `Uploaded: <a href="${doc.file_path}" target="_blank" class="text-blue-300 hover:underline">${doc.original_name}</a>`;
+                uploadBtn.textContent = 'Remove';
+                uploadBtn.className = 'w-full px-4 py-3 rounded-2xl bg-red-600 text-white font-semibold hover:bg-red-500 transition-all';
+                uploadBtn.onclick = () => deleteDocument(doc.id);
+                viewBtn.href = doc.file_path;
+                viewBtn.classList.remove('hidden');
+                viewBtn.textContent = type === 'dob' ? 'View DOB' : type === 'aadhaar' ? 'View Aadhaar' : 'View Document';
+            } else {
+                status.textContent = `No ${label} uploaded yet`;
+                uploadBtn.textContent = type === 'dob' ? 'Upload DOB' : type === 'aadhaar' ? 'Upload Aadhaar' : 'Upload Document';
+                uploadBtn.className = 'w-full px-4 py-3 rounded-2xl bg-white/10 text-gray-300 font-semibold hover:bg-white/20 transition-all';
+                uploadBtn.onclick = () => uploadDocumentType(type);
+                viewBtn.classList.add('hidden');
+            }
+
+            document.getElementById(`${type}SelectedName`).classList.add('hidden');
+            uploadBtn.disabled = false;
+        }
+
+        async function deleteDocument(documentId) {
+            if (!confirm('Are you sure you want to delete this document?')) return;
+
+            try {
+                const response = await fetch(`/api/user-documents/${documentId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    loadUserDocuments();
+                } else {
+                    alert('Failed to delete document');
+                }
+            } catch (error) {
+                console.error('Delete error:', error);
+                alert('Failed to delete document');
+            }
+        }
+
+        async function loadUserInsurancesDisplay() {
+            const userId = localStorage.getItem('userId');
+            if (!userId) return;
+
+            try {
+                const response = await fetch(`/api/user-insurances/${userId}`);
+                const insurances = await response.json();
+                
+                const container = document.getElementById('insuranceList');
+                if (insurances.length === 0) {
+                    container.innerHTML = '<p class="text-gray-400">No active insurance plans. <a href="/insurances.html" class="text-blue-400 hover:text-blue-300 font-semibold">Browse plans</a></p>';
+                    return;
+                }
+
+                container.innerHTML = insurances.map(insurance => `
+                    <div class="bg-white/5 border border-white/10 rounded-xl p-6 hover:border-white/20 transition-all">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h4 class="font-bold text-lg">${insurance.name}</h4>
+                                <p class="text-sm text-gray-400">${insurance.provider}</p>
+                            </div>
+                            <span class="px-3 py-1 bg-green-500/20 text-green-300 border border-green-400/30 rounded-full text-xs font-semibold">${insurance.status}</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 mb-4 py-4 border-y border-white/10">
+                            <div>
+                                <p class="text-xs text-gray-400 mb-1">Policy Number</p>
+                                <p class="font-semibold text-blue-400">${insurance.policy_number}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-400 mb-1">Coverage</p>
+                                <p class="font-semibold">₹${(insurance.sum_insured / 100000).toFixed(1)}L</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="navigateToClaimSubmission(${insurance.id})" class="flex-1 px-3 py-2 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-400/30 rounded-lg text-sm font-semibold text-blue-300 transition-all">File Claim</button>
+                            <button onclick="removeInsurancePlan(${insurance.id})" class="flex-1 px-3 py-2 bg-red-600/20 hover:bg-red-600/30 border border-red-400/30 rounded-lg text-sm font-semibold text-red-300 transition-all">Remove</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading insurances:', error);
+                document.getElementById('insuranceList').innerHTML = '<p class="text-red-400">Error loading insurance information</p>';
+            }
+        }
+
+        async function loadUserClaimsDisplay() {
+            const userId = localStorage.getItem('userId');
+            if (!userId) return;
+
+            try {
+                const response = await fetch(`/api/insurance-claims/${userId}`);
+                const claims = await response.json();
+                
+                const container = document.getElementById('claimsList');
+                if (claims.length === 0) {
+                    container.innerHTML = '<p class="text-gray-400">No claims submitted yet. <a href="#" onclick="goToClaimSubmission()" class="text-blue-400 hover:text-blue-300 font-semibold">File a claim</a></p>';
+                    return;
+                }
+
+                container.innerHTML = claims.map(claim => `
+                    <div class="bg-white/5 border border-white/10 rounded-xl p-6 hover:border-white/20 transition-all">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h4 class="font-bold text-lg">Claim #${claim.id}</h4>
+                                <p class="text-sm text-gray-400">${new Date(claim.claim_date).toLocaleDateString()}</p>
+                            </div>
+                            <span class="px-3 py-1 ${
+                                claim.claim_status === 'approved' ? 'bg-green-500/20 text-green-300 border-green-400/30' :
+                                claim.claim_status === 'rejected' ? 'bg-red-500/20 text-red-300 border-red-400/30' :
+                                'bg-yellow-500/20 text-yellow-300 border-yellow-400/30'
+                            } border rounded-full text-xs font-semibold">${claim.claim_status.toUpperCase()}</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 py-4 border-y border-white/10">
+                            <div>
+                                <p class="text-xs text-gray-400 mb-1">Claim Amount</p>
+                                <p class="font-semibold text-blue-400">₹${claim.claim_amount.toLocaleString()}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-400 mb-1">Submitted Date</p>
+                                <p class="font-semibold">${new Date(claim.claim_date).toLocaleDateString()}</p>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-300 mt-4">${claim.claim_description || 'No description'}</p>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading claims:', error);
+                document.getElementById('claimsList').innerHTML = '<p class="text-red-400">Error loading claims information</p>';
+            }
+        }
+
+        function navigateToClaimSubmission(insuranceId) {
+            window.location.href = `/claim-submission.html?insurance_id=${insuranceId}`;
+        }
+
+        function goToClaimSubmission() {
+            const userId = localStorage.getItem('userId');
+            if (!userId) {
+                alert('Please log in to file a claim.');
+                window.location.href = '/login.html';
+            } else {
+                window.location.href = '/claim-submission.html';
+            }
+        }
+
+        function removeInsurancePlan(insuranceId) {
+            if (confirm('Are you sure you want to remove this insurance plan?')) {
+                fetch(`/api/user-insurances/${insuranceId}`, { method: 'DELETE' })
+                    .then(r => r.json())
+                    .then(data => {
+                        alert('Insurance plan removed successfully');
+                        loadUserInsurancesDisplay();
+                    })
+                    .catch(err => {
+                        alert('Error removing insurance plan');
+                        console.error(err);
+                    });
+            }
+        }
+
+        // Load user profile from localStorage
+        window.addEventListener('load', () => {
+            updateProfileDisplay();
+            loadUserDocuments();
+        });
+
+        loadSavedHospitals();
+    </script>
+    <script src="/js/insurance.js"></script>
+    <script src="/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedSentinel - System Diagram</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { 
+            font-family: 'Arial', sans-serif;
+            background: #0a0a0a;
+        }
+        .connector {
+            width: 2px;
+            height: 40px;
+            background: linear-gradient(180deg, #3b82f6, #8b5cf6);
+            margin: 0 auto;
+            position: relative;
+        }
+        .connector::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 12px solid #8b5cf6;
+        }
+        .h-connector {
+            height: 2px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            position: relative;
+        }
+        .h-connector::after {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-left: 12px solid #8b5cf6;
+        }
+    </style>
+</head>
+<body class="p-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Title -->
+        <div class="text-center mb-12">
+            <h1 class="text-5xl font-bold text-white mb-2">MedSentinel System Architecture</h1>
+            <p class="text-gray-400">Complete Flow Diagram</p>
+        </div>
+
+        <!-- USER FLOW DIAGRAM -->
+        <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl p-8 mb-12 border-2 border-blue-500/30">
+            <h2 class="text-3xl font-bold text-center text-blue-400 mb-8">USER FLOW</h2>
+            
+            <!-- Row 1: Landing -->
+            <div class="flex justify-center mb-4">
+                <div class="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-6 w-80 text-center shadow-2xl border-2 border-blue-400">
+                    <div class="text-4xl mb-2">🏠</div>
+                    <div class="font-bold text-xl text-white">Landing Page</div>
+                    <div class="text-sm text-blue-100 mt-2">index.html</div>
+                </div>
+            </div>
+            <div class="connector"></div>
+
+            <!-- Row 2: Search Flow -->
+            <div class="flex justify-center mb-4">
+                <div class="bg-gradient-to-r from-purple-600 to-purple-700 rounded-xl p-6 w-80 text-center shadow-2xl border-2 border-purple-400">
+                    <div class="text-4xl mb-2">🔍</div>
+                    <div class="font-bold text-xl text-white">Search Flow (3 Steps)</div>
+                    <div class="text-sm text-purple-100 mt-2">search-flow.html</div>
+                    <div class="text-xs text-purple-200 mt-2">Condition → Profile → AI Process</div>
+                </div>
+            </div>
+            <div class="connector"></div>
+
+            <!-- Row 3: Hospital Results -->
+            <div class="flex justify-center mb-4">
+                <div class="bg-gradient-to-r from-green-600 to-green-700 rounded-xl p-6 w-80 text-center shadow-2xl border-2 border-green-400">
+                    <div class="text-4xl mb-2">🏥</div>
+                    <div class="font-bold text-xl text-white">Hospital Results</div>
+                    <div class="text-sm text-green-100 mt-2">hospitals.html</div>
+                </div>
+            </div>
+            <div class="connector"></div>
+
+            <!-- Row 4: Hospital Details -->
+            <div class="flex justify-center mb-4">
+                <div class="bg-gradient-to-r from-orange-600 to-orange-700 rounded-xl p-6 w-80 text-center shadow-2xl border-2 border-orange-400">
+                    <div class="text-4xl mb-2">📋</div>
+                    <div class="font-bold text-xl text-white">Hospital Details</div>
+                    <div class="text-sm text-orange-100 mt-2">hospital-details.html</div>
+                </div>
+            </div>
+            <div class="connector"></div>
+
+            <!-- Row 5: Split Path -->
+            <div class="grid grid-cols-3 gap-6 mb-4">
+                <div class="bg-gradient-to-r from-pink-600 to-pink-700 rounded-xl p-6 text-center shadow-2xl border-2 border-pink-400">
+                    <div class="text-4xl mb-2">📅</div>
+                    <div class="font-bold text-lg text-white">Book Consultation</div>
+                    <div class="text-xs text-pink-100 mt-2">book-consultation.html</div>
+                </div>
+                <div class="bg-gradient-to-r from-cyan-600 to-cyan-700 rounded-xl p-6 text-center shadow-2xl border-2 border-cyan-400">
+                    <div class="text-4xl mb-2">🏛️</div>
+                    <div class="font-bold text-lg text-white">Schemes</div>
+                    <div class="text-xs text-cyan-100 mt-2">schemes.html</div>
+                </div>
+                <div class="bg-gradient-to-r from-yellow-600 to-yellow-700 rounded-xl p-6 text-center shadow-2xl border-2 border-yellow-400">
+                    <div class="text-4xl mb-2">✅</div>
+                    <div class="font-bold text-lg text-white">Eligibility</div>
+                    <div class="text-xs text-yellow-100 mt-2">eligibility.html</div>
+                </div>
+            </div>
+            <div class="connector"></div>
+
+            <!-- Row 6: Final Pages -->
+            <div class="grid grid-cols-2 gap-6">
+                <div class="bg-gradient-to-r from-indigo-600 to-indigo-700 rounded-xl p-6 text-center shadow-2xl border-2 border-indigo-400">
+                    <div class="text-4xl mb-2">💰</div>
+                    <div class="font-bold text-lg text-white">Cost Comparison</div>
+                    <div class="text-xs text-indigo-100 mt-2">comparison.html</div>
+                </div>
+                <div class="bg-gradient-to-r from-red-600 to-red-700 rounded-xl p-6 text-center shadow-2xl border-2 border-red-400">
+                    <div class="text-4xl mb-2">👤</div>
+                    <div class="font-bold text-lg text-white">User Profile</div>
+                    <div class="text-xs text-red-100 mt-2">profile.html</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SYSTEM ARCHITECTURE -->
+        <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl p-8 border-2 border-purple-500/30">
+            <h2 class="text-3xl font-bold text-center text-purple-400 mb-8">SYSTEM ARCHITECTURE</h2>
+            
+            <div class="grid grid-cols-3 gap-8">
+                <!-- Frontend Layer -->
+                <div class="col-span-1">
+                    <div class="bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl p-6 h-full border-2 border-blue-400">
+                        <div class="text-center mb-4">
+                            <div class="text-5xl mb-3">🖥️</div>
+                            <h3 class="text-2xl font-bold text-white">FRONTEND</h3>
+                        </div>
+                        <div class="space-y-2 text-sm text-blue-100">
+                            <div class="bg-blue-900/50 rounded p-2">HTML5</div>
+                            <div class="bg-blue-900/50 rounded p-2">CSS3 / Tailwind</div>
+                            <div class="bg-blue-900/50 rounded p-2">JavaScript</div>
+                            <div class="bg-blue-900/50 rounded p-2">Material Icons</div>
+                            <div class="bg-blue-900/50 rounded p-2">Unsplash Images</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Backend Layer -->
+                <div class="col-span-1">
+                    <div class="bg-gradient-to-br from-green-600 to-green-800 rounded-2xl p-6 h-full border-2 border-green-400">
+                        <div class="text-center mb-4">
+                            <div class="text-5xl mb-3">⚙️</div>
+                            <h3 class="text-2xl font-bold text-white">BACKEND</h3>
+                        </div>
+                        <div class="space-y-2 text-sm text-green-100">
+                            <div class="bg-green-900/50 rounded p-2">Node.js</div>
+                            <div class="bg-green-900/50 rounded p-2">Express.js</div>
+                            <div class="bg-green-900/50 rounded p-2">Port: 3001</div>
+                            <div class="bg-green-900/50 rounded p-2">CORS Enabled</div>
+                            <div class="bg-green-900/50 rounded p-2">Body Parser</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Database Layer -->
+                <div class="col-span-1">
+                    <div class="bg-gradient-to-br from-purple-600 to-purple-800 rounded-2xl p-6 h-full border-2 border-purple-400">
+                        <div class="text-center mb-4">
+                            <div class="text-5xl mb-3">🗄️</div>
+                            <h3 class="text-2xl font-bold text-white">DATABASE</h3>
+                        </div>
+                        <div class="space-y-2 text-sm text-purple-100">
+                            <div class="bg-purple-900/50 rounded p-2">SQLite3</div>
+                            <div class="bg-purple-900/50 rounded p-2">hospitals</div>
+                            <div class="bg-purple-900/50 rounded p-2">users</div>
+                            <div class="bg-purple-900/50 rounded p-2">schemes</div>
+                            <div class="bg-purple-900/50 rounded p-2">saved_items</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API Layer -->
+            <div class="mt-8 bg-gradient-to-r from-orange-600 to-red-600 rounded-2xl p-6 border-2 border-orange-400">
+                <div class="text-center mb-4">
+                    <div class="text-4xl mb-2">🔌</div>
+                    <h3 class="text-2xl font-bold text-white">API ENDPOINTS</h3>
+                </div>
+                <div class="grid grid-cols-3 gap-3 text-sm">
+                    <div class="bg-orange-900/50 rounded p-3 text-center text-white font-mono">
+                        <span class="text-green-300">GET</span> /api/hospitals
+                    </div>
+                    <div class="bg-orange-900/50 rounded p-3 text-center text-white font-mono">
+                        <span class="text-green-300">GET</span> /api/hospitals/:id
+                    </div>
+                    <div class="bg-orange-900/50 rounded p-3 text-center text-white font-mono">
+                        <span class="text-green-300">GET</span> /api/schemes
+                    </div>
+                    <div class="bg-orange-900/50 rounded p-3 text-center text-white font-mono">
+                        <span class="text-yellow-300">POST</span> /api/users
+                    </div>
+                    <div class="bg-orange-900/50 rounded p-3 text-center text-white font-mono">
+                        <span class="text-green-300">GET</span> /api/users/:id
+                    </div>
+                    <div class="bg-orange-900/50 rounded p-3 text-center text-white font-mono">
+                        <span class="text-yellow-300">POST</span> /api/saved-items
+                    </div>
+                    <div class="bg-orange-900/50 rounded p-3 text-center text-white font-mono">
+                        <span class="text-green-300">GET</span> /api/saved-items/:userId
+                    </div>
+                    <div class="bg-orange-900/50 rounded p-3 text-center text-white font-mono">
+                        <span class="text-red-300">DELETE</span> /api/saved-items/:userId/:hospitalId
+                    </div>
+                    <div class="bg-orange-900/50 rounded p-3 text-center text-white font-mono">
+                        <span class="text-yellow-300">POST</span> /api/eligibility-check
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center mt-8 text-gray-500 text-sm">
+            <p>MedSentinel Healthcare Platform | Server: http://localhost:3001</p>
+        </div>
+    </div>
+</body>
+</html>

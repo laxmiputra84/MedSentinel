@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Insurance Claim - MedSentinel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-gray-800 to-black font-['Inter'] text-white">
+    <header class="bg-black/40 backdrop-blur-xl sticky top-0 z-50 border-b border-white/10">
+        <nav class="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
+            <a href="/" class="flex items-center space-x-3 group">
+                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <span class="material-symbols-outlined text-white text-xl">health_and_safety</span>
+                </div>
+                <span class="text-2xl font-black bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent font-['Manrope']">MedSentinel</span>
+            </a>
+            <div class="flex items-center space-x-3">
+                <a href="/profile.html" class="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg hover:shadow-lg transition-all">Back to Profile</a>
+            </div>
+        </nav>
+    </header>
+
+    <section class="pt-20 pb-20 px-6">
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-5xl font-black mb-4 font-['Manrope']">File Insurance Claim</h1>
+            <p class="text-xl text-gray-300 mb-12">Submit your claim quickly and easily. Our team will process it within 24 hours.</p>
+
+            <div class="bg-white/5 backdrop-blur-lg rounded-3xl p-8 border border-white/10 shadow-2xl">
+                <form id="claimForm" onsubmit="submitClaim(event)">
+                    <!-- Claim Type Section -->
+                    <div class="mb-8 pb-8 border-b border-white/10">
+                        <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+                            <span class="material-symbols-outlined">description</span> Claim Information
+                        </h2>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                <label class="block text-sm font-semibold mb-3">Insurance Plan</label>
+                                <select id="insuranceId" required class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">Select your insurance plan</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold mb-3">Hospital Treated</label>
+                                <select id="hospitalId" required class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">Select hospital</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-semibold mb-3">Treatment Date</label>
+                                <input type="date" id="treatmentDate" required class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold mb-3">Discharge Date</label>
+                                <input type="date" id="dischargeDate" required class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Claim Details -->
+                    <div class="mb-8 pb-8 border-b border-white/10">
+                        <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+                            <span class="material-symbols-outlined">attach_money</span> Claim Amount
+                        </h2>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-semibold mb-3">Total Bill Amount</label>
+                                <div class="relative">
+                                    <span class="absolute left-4 top-3 text-xl font-bold text-gray-500">₹</span>
+                                    <input type="number" id="billAmount" placeholder="0.00" step="0.01" required class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 pl-8 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold mb-3">Claim Amount (If different)</label>
+                                <div class="relative">
+                                    <span class="absolute left-4 top-3 text-xl font-bold text-gray-500">₹</span>
+                                    <input type="number" id="claimAmount" placeholder="0.00" step="0.01" required class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 pl-8 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Treatment Description -->
+                    <div class="mb-8 pb-8 border-b border-white/10">
+                        <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+                            <span class="material-symbols-outlined">medical_information</span> Treatment Details
+                        </h2>
+
+                        <div class="mb-6">
+                            <label class="block text-sm font-semibold mb-3">Diagnosis/Reason for Treatment</label>
+                            <input type="text" id="diagnosis" placeholder="e.g., Appendectomy, Cataract Surgery" required class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold mb-3">Additional Details (Optional)</label>
+                            <textarea id="claimDescription" rows="4" placeholder="Provide any additional information about your treatment..." class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Document Upload -->
+                    <div class="mb-8 pb-8 border-b border-white/10">
+                        <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+                            <span class="material-symbols-outlined">upload_file</span> Required Documents
+                        </h2>
+
+                        <p class="text-gray-300 mb-4 text-sm">Please upload the following documents:</p>
+                        <ul class="list-disc list-inside text-gray-300 text-sm mb-6 space-y-2">
+                            <li>Discharge summary or medical bills</li>
+                            <li>Insurance policy copy</li>
+                            <li>Prescription and medical reports (optional)</li>
+                        </ul>
+
+                        <div class="bg-white/5 border-2 border-dashed border-white/20 rounded-xl p-8 text-center hover:border-blue-400/50 transition-all cursor-pointer" onclick="document.getElementById('documents').click()">
+                            <span class="material-symbols-outlined text-5xl text-blue-400 mb-2">cloud_upload</span>
+                            <p class="text-white font-semibold mb-1">Click to upload or drag and drop</p>
+                            <p class="text-gray-400 text-sm">PDF, Images up to 10MB</p>
+                        </div>
+                        <input type="file" id="documents" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" style="display:none;">
+                        <div id="fileList" class="mt-4"></div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="flex gap-4">
+                        <button type="submit" class="flex-1 px-6 py-4 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined">check_circle</span>
+                            Submit Claim
+                        </button>
+                        <button type="button" onclick="window.history.back()" class="flex-1 px-6 py-4 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold rounded-lg transition-all">
+                            Cancel
+                        </button>
+                    </div>
+
+                    <p class="text-xs text-gray-400 text-center mt-6">By submitting this claim, you confirm that all information provided is accurate and truthful.</p>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-black/40 backdrop-blur-xl border-t border-white/10 mt-20 py-12 px-6">
+        <div class="max-w-7xl mx-auto text-center text-gray-400">
+            <p>&copy; 2024 MedSentinel. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="/js/insurance.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const insuranceId = urlParams.get('insurance_id');
+        const userId = localStorage.getItem('userId');
+
+        async function loadFormData() {
+            try {
+                // Load user's insurances
+                const insurances = await getUserInsurances(userId);
+                const insuranceSelect = document.getElementById('insuranceId');
+                insurances.forEach(insurance => {
+                    const option = document.createElement('option');
+                    option.value = insurance.id;
+                    option.textContent = insurance.name;
+                    if (insurance.id == insuranceId) option.selected = true;
+                    insuranceSelect.appendChild(option);
+                });
+
+                // Load hospitals
+                const hospitalResponse = await fetch('/api/hospitals');
+                const hospitals = await hospitalResponse.json();
+                const hospitalSelect = document.getElementById('hospitalId');
+                hospitals.forEach(hospital => {
+                    const option = document.createElement('option');
+                    option.value = hospital.id;
+                    option.textContent = hospital.name;
+                    hospitalSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading form data:', error);
+                alert('Error loading form. Please refresh the page.');
+            }
+        }
+
+        document.getElementById('documents').addEventListener('change', function(e) {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+            Array.from(e.target.files).forEach(file => {
+                const div = document.createElement('div');
+                div.className = 'mt-2 p-3 bg-white/5 border border-white/10 rounded-lg flex items-center justify-between';
+                div.innerHTML = `
+                    <span class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-green-400">attach_file</span>
+                        <span class="text-sm">${file.name}</span>
+                    </span>
+                    <span class="text-xs text-gray-400">${(file.size / 1024 / 1024).toFixed(2)} MB</span>
+                `;
+                fileList.appendChild(div);
+            });
+        });
+
+        async function submitClaim(event) {
+            event.preventDefault();
+
+            const claimData = {
+                user_id: userId,
+                insurance_id: document.getElementById('insuranceId').value,
+                claim_amount: parseFloat(document.getElementById('claimAmount').value),
+                hospital_id: document.getElementById('hospitalId').value,
+                claim_description: `${document.getElementById('diagnosis').value} - Bill: ₹${document.getElementById('billAmount').value}. ${document.getElementById('claimDescription').value}`
+            };
+
+            try {
+                const result = await submitInsuranceClaim(claimData);
+                alert(`Claim submitted successfully!\nClaim ID: ${result.id}\nStatus: ${result.claim_status}`);
+                window.location.href = '/profile.html';
+            } catch (error) {
+                console.error('Error submitting claim:', error);
+                alert('Error submitting claim. Please try again.');
+            }
+        }
+
+        // Load form data on page load
+        if (!userId) {
+            alert('Please log in to file a claim.');
+            window.location.href = '/login.html';
+        } else {
+            loadFormData();
+        }
+    </script>
+</body>
+</html>

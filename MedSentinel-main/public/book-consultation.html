@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Consultation - MedSentinel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .material-symbols-rounded { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        select option { background-color: #1f2937; color: white; }
+        button:active { transform: scale(0.98); }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+    <nav class="bg-black/50 backdrop-blur-xl border-b border-white/10 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="/" class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <span class="material-symbols-rounded text-white text-xl">health_and_safety</span>
+                    </div>
+                    <span class="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">MedSentinel</span>
+                </a>
+                <div class="flex items-center space-x-3">
+                    <a href="/" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white">Home</a>
+                    <a href="/hospitals.html" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white">Hospitals</a>
+                    <button onclick="logout()" class="px-3 py-2 text-sm font-medium text-white bg-red-600/80 hover:bg-red-700 rounded-lg transition-all flex items-center space-x-1">
+                        <span class="material-symbols-rounded text-sm">logout</span>
+                        <span class="hidden sm:inline">Logout</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-5xl mx-auto px-4 py-12">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">Book Your Consultation</h1>
+            <p class="text-gray-400 text-lg">Schedule an appointment with top healthcare professionals</p>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2">
+                <form id="bookingForm" class="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl rounded-2xl p-8 border border-white/10 space-y-6">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-300 mb-2">Full Name *</label>
+                            <input id="bookingName" type="text" required class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500" placeholder="Enter your name">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-300 mb-2">Phone Number *</label>
+                            <div class="flex gap-3 items-center">
+                                <input id="bookingPhone" type="tel" required class="flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500" placeholder="+91 XXXXX-XXXXX">
+                                <button id="sendOtpBtn" type="button" onclick="sendBookingOtp()" class="px-4 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-500 transition-all">Send OTP</button>
+                            </div>
+                            <p id="otpStatus" class="text-xs text-gray-400 mt-2">A one-time code will be sent to your mobile number.</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-300 mb-2">Email Address *</label>
+                        <input id="bookingEmail" type="email" required class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500" placeholder="your@email.com">
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-300 mb-2">Preferred Date *</label>
+                            <input id="bookingDate" type="date" required class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-300 mb-2">Preferred Time *</label>
+                            <select id="bookingTime" required class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:ring-2 focus:ring-blue-500">
+                                <option value="">Select Time</option>
+                                <option value="09:00">09:00 AM</option>
+                                <option value="10:00">10:00 AM</option>
+                                <option value="11:00">11:00 AM</option>
+                                <option value="14:00">02:00 PM</option>
+                                <option value="15:00">03:00 PM</option>
+                                <option value="16:00">04:00 PM</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-300 mb-2">Department *</label>
+                        <select id="bookingDepartment" required class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:ring-2 focus:ring-blue-500">
+                            <option value="">Select Department</option>
+                            <option value="cardiology">Cardiology</option>
+                            <option value="orthopedics">Orthopedics</option>
+                            <option value="neurology">Neurology</option>
+                            <option value="pediatrics">Pediatrics</option>
+                            <option value="general">General Medicine</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-300 mb-2">Reason for Visit</label>
+                        <textarea id="bookingReason" rows="4" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500" placeholder="Describe your symptoms or reason for consultation..."></textarea>
+                    </div>
+
+                    <div id="otpPanel" class="hidden space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-300 mb-2">Enter OTP</label>
+                            <div class="flex gap-3 items-center">
+                                <input id="bookingOtp" type="text" maxlength="6" class="flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500" placeholder="Enter the OTP">
+                                <button id="verifyOtpBtn" type="button" onclick="verifyBookingOtp()" class="px-4 py-3 rounded-xl bg-green-600 text-white font-semibold hover:bg-green-500 transition-all" disabled>Verify OTP</button>
+                            </div>
+                            <p id="otpMessage" class="text-xs text-gray-400 mt-2">Please enter the code sent to your mobile number.</p>
+                        </div>
+                    </div>
+
+                    <button id="confirmBookingBtn" type="submit" class="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl hover:shadow-lg hover:shadow-blue-500/50 transition-all" disabled>
+                        Confirm Booking
+                    </button>
+                </form>
+            </div>
+
+            <div class="space-y-6">
+                <div class="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl rounded-2xl p-6 border border-white/10">
+                    <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+                        <span class="material-symbols-rounded text-blue-400">info</span>
+                        Booking Information
+                    </h3>
+                    <div class="space-y-3 text-sm text-gray-300">
+                        <div class="flex items-start gap-2">
+                            <span class="material-symbols-rounded text-green-400 text-lg">check_circle</span>
+                            <span>Instant confirmation via SMS & Email</span>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <span class="material-symbols-rounded text-green-400 text-lg">check_circle</span>
+                            <span>Free cancellation up to 24 hours</span>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <span class="material-symbols-rounded text-green-400 text-lg">check_circle</span>
+                            <span>Average wait time: 15 minutes</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-blue-500/20 to-purple-500/20 backdrop-blur-xl rounded-2xl p-6 border border-blue-500/30">
+                    <h3 class="text-lg font-bold mb-3">Need Help?</h3>
+                    <p class="text-sm text-gray-300 mb-4">Our support team is available 24/7</p>
+                    <button class="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl hover:shadow-lg transition-all">
+                        Call Support
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const apiBase = window.location.protocol === 'file:' ? 'http://localhost:3001' : window.location.origin;
+        let bookingOtpSent = false;
+        let bookingOtpVerified = false;
+        let bookedTimes = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const bookingDate = document.getElementById('bookingDate');
+            bookingDate.min = new Date().toISOString().split('T')[0];
+            if (bookingDate.value) {
+                loadBookedTimes(bookingDate.value);
+            }
+        });
+
+        async function loadBookedTimes(date) {
+            const timeStatus = document.getElementById('timeStatus');
+            const bookingTime = document.getElementById('bookingTime');
+
+            if (!date) {
+                bookedTimes = [];
+                timeStatus.textContent = 'Available slots will refresh when you select a date.';
+                bookingTime.querySelectorAll('option').forEach(opt => opt.disabled = false);
+                return;
+            }
+
+            try {
+                const response = await fetch(`${apiBase}/api/booked-timeslots?date=${encodeURIComponent(date)}`);
+                const result = await response.json();
+                if (!response.ok) {
+                    timeStatus.textContent = 'Unable to load booked slots. Please try again.';
+                    timeStatus.className = 'text-xs text-red-400 mt-2';
+                    return;
+                }
+
+                bookedTimes = result;
+                const selectedValue = bookingTime.value;
+                bookingTime.querySelectorAll('option').forEach(opt => {
+                    if (opt.value && bookedTimes.includes(opt.value)) {
+                        opt.disabled = true;
+                        opt.textContent = `${opt.textContent.split(' ')[0]} (Booked)`;
+                    } else if (opt.value) {
+                        opt.disabled = false;
+                        opt.textContent = opt.value === '09:00' ? '09:00 AM' : opt.value === '10:00' ? '10:00 AM' : opt.value === '11:00' ? '11:00 AM' : opt.value === '14:00' ? '02:00 PM' : opt.value === '15:00' ? '03:00 PM' : opt.value === '16:00' ? '04:00 PM' : opt.textContent;
+                    }
+                });
+                if (selectedValue && bookedTimes.includes(selectedValue)) {
+                    bookingTime.value = '';
+                }
+
+                if (bookedTimes.length === 0) {
+                    timeStatus.textContent = 'All time slots are currently available for this date.';
+                    timeStatus.className = 'text-xs text-green-400 mt-2';
+                } else {
+                    timeStatus.textContent = `Booked slots for ${date}: ${bookedTimes.join(', ')}. Please choose another time.`;
+                    timeStatus.className = 'text-xs text-yellow-300 mt-2';
+                }
+            } catch (error) {
+                console.error('Booked times load error:', error);
+                timeStatus.textContent = 'Unable to load booked slots. Try again later.';
+                timeStatus.className = 'text-xs text-red-400 mt-2';
+            }
+        }
+
+        document.getElementById('bookingDate').addEventListener('change', (event) => {
+            loadBookedTimes(event.target.value);
+        });
+
+        async function sendBookingOtp() {
+            const phone = document.getElementById('bookingPhone').value.trim();
+            const otpStatus = document.getElementById('otpStatus');
+            const verifyBtn = document.getElementById('verifyOtpBtn');
+            const otpPanel = document.getElementById('otpPanel');
+            const confirmBtn = document.getElementById('confirmBookingBtn');
+
+            if (!phone) {
+                alert('Please enter your phone number first.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${apiBase}/api/send-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone })
+                });
+                const result = await response.json();
+
+                if (!response.ok) {
+                    otpStatus.textContent = result.error || 'Failed to send OTP. Please try again.';
+                    otpStatus.className = 'text-xs text-red-400 mt-2';
+                    return;
+                }
+
+                bookingOtpSent = true;
+                bookingOtpVerified = false;
+                otpPanel.classList.remove('hidden');
+                verifyBtn.disabled = false;
+                confirmBtn.disabled = true;
+                
+                if (result.testOtp) {
+                    otpStatus.innerHTML = `<span class="font-semibold text-yellow-300">📲 TEST OTP: ${result.testOtp}</span> (Development mode)`;
+                    otpStatus.className = 'text-xs text-yellow-300 mt-2 bg-yellow-900/30 p-2 rounded';
+                } else {
+                    otpStatus.textContent = 'OTP sent to your phone. Check SMS for the code.';
+                    otpStatus.className = 'text-xs text-green-400 mt-2';
+                }
+            } catch (error) {
+                otpStatus.textContent = 'Unable to send OTP. Please try again later.';
+                otpStatus.className = 'text-xs text-red-400 mt-2';
+                console.error('OTP send error:', error);
+            }
+        }
+
+        async function verifyBookingOtp() {
+            const phone = document.getElementById('bookingPhone').value.trim();
+            const otp = document.getElementById('bookingOtp').value.trim();
+            const otpMessage = document.getElementById('otpMessage');
+            const confirmBtn = document.getElementById('confirmBookingBtn');
+
+            if (!bookingOtpSent) {
+                alert('Please request an OTP first.');
+                return;
+            }
+            if (!otp) {
+                alert('Please enter the OTP received on your phone.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${apiBase}/api/verify-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone, otp })
+                });
+                const result = await response.json();
+
+                if (!response.ok) {
+                    otpMessage.textContent = result.error || 'Incorrect OTP, please try again.';
+                    otpMessage.className = 'text-xs text-red-400 mt-2';
+                    bookingOtpVerified = false;
+                    confirmBtn.disabled = true;
+                    return;
+                }
+
+                bookingOtpVerified = true;
+                otpMessage.textContent = 'OTP verified! You can now confirm your booking.';
+                otpMessage.className = 'text-xs text-green-400 mt-2';
+                confirmBtn.disabled = false;
+            } catch (error) {
+                otpMessage.textContent = 'Verification failed. Please try again.';
+                otpMessage.className = 'text-xs text-red-400 mt-2';
+                console.error('OTP verify error:', error);
+            }
+        }
+
+        document.getElementById('bookingForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (!bookingOtpVerified) {
+                alert('Please verify the OTP sent to your mobile number before booking.');
+                return;
+            }
+
+            const name = document.getElementById('bookingName').value.trim();
+            const phone = document.getElementById('bookingPhone').value.trim();
+            const email = document.getElementById('bookingEmail').value.trim();
+            const preferredDate = document.getElementById('bookingDate').value;
+            const preferredTime = document.getElementById('bookingTime').value;
+            const department = document.getElementById('bookingDepartment').value;
+            const reason = document.getElementById('bookingReason').value.trim();
+
+            try {
+                const response = await fetch(`${apiBase}/api/book-consultation`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, phone, email, preferredDate, preferredTime, department, reason })
+                });
+                const result = await response.json();
+
+                if (!response.ok) {
+                    if (response.status === 409) {
+                        alert(result.error || 'This time slot is already booked. Please choose a different time.');
+                        loadBookedTimes(preferredDate);
+                        return;
+                    }
+                    alert(result.error || 'Booking failed. Please try again.');
+                    return;
+                }
+
+                const notification = document.createElement('div');
+                notification.className = 'fixed top-4 right-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-4 rounded-xl shadow-lg z-50 animate-slideInRight';
+                notification.innerHTML = `<div class="flex items-center space-x-2"><span class="material-symbols-rounded">check_circle</span><span>${result.message}</span></div>`;
+                document.body.appendChild(notification);
+
+                setTimeout(() => {
+                    notification.remove();
+                    window.location.href = '/profile.html';
+                }, 2000);
+            } catch (error) {
+                console.error('Booking error:', error);
+                alert('Unable to book consultation right now. Please try again later.');
+            }
+        });
+    </script>
+    <script src="/js/main.js"></script>
+</body>
+</html>

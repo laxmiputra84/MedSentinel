@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Healthcare - MedSentinel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .material-symbols-rounded { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .step-indicator { transition: all 0.3s; }
+        .step-active { background: linear-gradient(135deg, #3b82f6, #8b5cf6); }
+        .step-completed { background: #10b981; }
+        .step-pending { background: #6b7280; }
+        select option { background-color: #1f2937; color: white; }
+        button:active { transform: scale(0.98); }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+    <nav class="bg-black/50 backdrop-blur-xl border-b border-white/10 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="/" class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <span class="material-symbols-rounded text-white text-xl">health_and_safety</span>
+                    </div>
+                    <span class="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">MedSentinel</span>
+                </a>
+            <div class="flex items-center space-x-3 ml-auto">
+                <button onclick="logout()" class="px-3 py-2 text-sm font-medium text-white bg-red-600/80 hover:bg-red-700 rounded-lg transition-all flex items-center space-x-1">
+                    <span class="material-symbols-rounded text-sm">logout</span>
+                    <span class="hidden sm:inline">Logout</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+    <!-- Progress Steps -->
+        <div class="mb-12">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center space-x-2">
+                    <div id="step1-indicator" class="step-indicator step-active w-10 h-10 rounded-full flex items-center justify-center text-white font-bold">1</div>
+                    <span class="text-sm font-semibold text-white">Medical Search</span>
+                </div>
+                <div class="flex-1 h-1 bg-gray-700 mx-4"></div>
+                <div class="flex items-center space-x-2">
+                    <div id="step2-indicator" class="step-indicator step-pending w-10 h-10 rounded-full flex items-center justify-center text-white font-bold">2</div>
+                    <span class="text-sm font-semibold text-gray-400">Patient Details</span>
+                </div>
+                <div class="flex-1 h-1 bg-gray-700 mx-4"></div>
+                <div class="flex items-center space-x-2">
+                    <div id="step3-indicator" class="step-indicator step-pending w-10 h-10 rounded-full flex items-center justify-center text-white font-bold">3</div>
+                    <span class="text-sm font-semibold text-gray-400">Results</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 1: Medical Condition Search -->
+        <div id="step1" class="bg-white/5 backdrop-blur-xl rounded-2xl p-8 border border-white/10">
+            <h2 class="text-3xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">What treatment do you need?</h2>
+            
+            <div class="space-y-6">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-300 mb-2">Medical Condition or Procedure</label>
+                    <input id="condition" type="text" placeholder="e.g., Heart Surgery, Diabetes Treatment, MRI Scan" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500">
+                    <p class="text-xs text-gray-400 mt-2">💡 Try: Cataract Surgery, Kidney Stone Removal, Cancer Chemotherapy</p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-300 mb-2">Location Preference</label>
+                    <input id="location" type="text" placeholder="City or State (e.g., Mumbai, Maharashtra)" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-300 mb-2">Treatment Urgency</label>
+                    <div class="grid grid-cols-3 gap-4">
+                        <button onclick="selectUrgency('emergency')" class="urgency-btn px-4 py-3 bg-white/5 border-2 border-white/10 rounded-xl hover:border-red-500 transition-all">
+                            <span class="material-symbols-rounded text-red-400 text-2xl block mb-1">emergency</span>
+                            <span class="text-sm font-semibold">Emergency</span>
+                        </button>
+                        <button onclick="selectUrgency('scheduled')" class="urgency-btn px-4 py-3 bg-white/5 border-2 border-white/10 rounded-xl hover:border-blue-500 transition-all">
+                            <span class="material-symbols-rounded text-blue-400 text-2xl block mb-1">calendar_month</span>
+                            <span class="text-sm font-semibold">Scheduled</span>
+                        </button>
+                        <button onclick="selectUrgency('flexible')" class="urgency-btn px-4 py-3 bg-white/5 border-2 border-white/10 rounded-xl hover:border-green-500 transition-all">
+                            <span class="material-symbols-rounded text-green-400 text-2xl block mb-1">schedule</span>
+                            <span class="text-sm font-semibold">Flexible</span>
+                        </button>
+                    </div>
+                </div>
+
+                <button onclick="goToStep2()" class="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl hover:shadow-lg hover:scale-105 transition-all">
+                    Continue to Patient Details →
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 2: Patient Profile Details -->
+        <div id="step2" class="hidden bg-white/5 backdrop-blur-xl rounded-2xl p-8 border border-white/10">
+            <h2 class="text-3xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Patient Information</h2>
+            <p class="text-gray-400 mb-6">This helps us check your eligibility for government schemes</p>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-300 mb-2">Full Name</label>
+                    <input id="fullName" type="text" placeholder="Patient's legal name" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-300 mb-2">Age</label>
+                    <input id="age" type="number" placeholder="Patient's age" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-300 mb-2">Gender</label>
+                    <select id="gender" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:ring-2 focus:ring-blue-500">
+                        <option value="">Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-300 mb-2">Income Category</label>
+                    <select id="income" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:ring-2 focus:ring-blue-500">
+                        <option value="">Select Income</option>
+                        <option value="bpl">Below Poverty Line (BPL)</option>
+                        <option value="low">Low (< ₹3L/year)</option>
+                        <option value="middle">Middle (₹3L - ₹12L/year)</option>
+                        <option value="high">High (> ₹12L/year)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-300 mb-2">State of Residence</label>
+                    <input id="state" type="text" placeholder="e.g., Maharashtra" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-300 mb-2">Aadhaar Number (Optional)</label>
+                    <input id="aadhaar" type="text" placeholder="XXXX-XXXX-XXXX" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500">
+                </div>
+            </div>
+
+            <div class="flex gap-4 mt-8">
+                <button onclick="goToStep1()" class="flex-1 py-4 bg-white/5 border border-white/10 text-white font-bold rounded-xl hover:bg-white/10 transition-all">
+                    ← Back
+                </button>
+                <button onclick="processSearch()" class="flex-1 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl hover:shadow-lg hover:scale-105 transition-all">
+                    Find Best Options →
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 3: AI Processing -->
+        <div id="step3" class="hidden bg-white/5 backdrop-blur-xl rounded-2xl p-12 border border-white/10 text-center">
+            <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
+                <span class="material-symbols-rounded text-white text-4xl">psychology</span>
+            </div>
+            <h2 class="text-3xl font-bold mb-4">AI is analyzing your options...</h2>
+            <p class="text-gray-400 mb-8">This will take 10-15 seconds</p>
+            <div class="space-y-3 max-w-md mx-auto">
+                <div class="flex items-center gap-3 text-left">
+                    <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                    <span class="text-sm text-gray-300">Analyzing treatment costs across hospitals...</span>
+                </div>
+                <div class="flex items-center gap-3 text-left">
+                    <div class="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
+                    <span class="text-sm text-gray-300">Checking government scheme eligibility...</span>
+                </div>
+                <div class="flex items-center gap-3 text-left">
+                    <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <span class="text-sm text-gray-300">Generating personalized recommendations...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let searchData = { urgency: '' };
+
+        function selectUrgency(type) {
+            searchData.urgency = type;
+            document.querySelectorAll('.urgency-btn').forEach(btn => {
+                btn.classList.remove('border-red-500', 'border-blue-500', 'border-green-500', 'bg-white/10');
+            });
+            event.target.closest('button').classList.add('bg-white/10');
+            if(type === 'emergency') event.target.closest('button').classList.add('border-red-500');
+            if(type === 'scheduled') event.target.closest('button').classList.add('border-blue-500');
+            if(type === 'flexible') event.target.closest('button').classList.add('border-green-500');
+        }
+
+        function goToStep2() {
+            const condition = document.getElementById('condition').value;
+            const location = document.getElementById('location').value;
+            
+            if(!condition || !location) {
+                alert('Please fill in medical condition and location');
+                return;
+            }
+
+            searchData.condition = condition;
+            searchData.location = location;
+
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.remove('hidden');
+            document.getElementById('step1-indicator').classList.remove('step-active');
+            document.getElementById('step1-indicator').classList.add('step-completed');
+            document.getElementById('step2-indicator').classList.remove('step-pending');
+            document.getElementById('step2-indicator').classList.add('step-active');
+            window.scrollTo(0, 0);
+        }
+
+        function goToStep1() {
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step1').classList.remove('hidden');
+            document.getElementById('step1-indicator').classList.add('step-active');
+            document.getElementById('step1-indicator').classList.remove('step-completed');
+            document.getElementById('step2-indicator').classList.add('step-pending');
+            document.getElementById('step2-indicator').classList.remove('step-active');
+            window.scrollTo(0, 0);
+        }
+
+        function processSearch() {
+            searchData.fullName = document.getElementById('fullName').value;
+            searchData.age = document.getElementById('age').value;
+            searchData.gender = document.getElementById('gender').value;
+            searchData.income = document.getElementById('income').value;
+            searchData.state = document.getElementById('state').value;
+
+            if(!searchData.fullName || !searchData.age || !searchData.gender || !searchData.income) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step3').classList.remove('hidden');
+            document.getElementById('step2-indicator').classList.remove('step-active');
+            document.getElementById('step2-indicator').classList.add('step-completed');
+            document.getElementById('step3-indicator').classList.remove('step-pending');
+            document.getElementById('step3-indicator').classList.add('step-active');
+            window.scrollTo(0, 0);
+
+            // Simulate AI processing
+            setTimeout(() => {
+                const combinedSearch = `${searchData.condition} ${searchData.location}`.trim();
+                window.location.href = '/hospitals.html?search=' + encodeURIComponent(combinedSearch);
+            }, 3000);
+        }
+
+        // Prefill form values from query parameters
+        (function prefillSearchData() {
+            const params = new URLSearchParams(window.location.search);
+            const condition = params.get('condition') || params.get('search');
+            const location = params.get('location');
+            if (condition) document.getElementById('condition').value = condition;
+            if (location) document.getElementById('location').value = location;
+        })();
+    </script>
+    <script src="/js/main.js"></script>
+</body>
+</html>

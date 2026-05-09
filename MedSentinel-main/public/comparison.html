@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cost Comparison - MedSentinel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .material-symbols-rounded { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+    <!-- Navigation -->
+    <nav class="bg-black/50 backdrop-blur-xl border-b border-white/10 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="/" class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <span class="material-symbols-rounded text-white text-xl">health_and_safety</span>
+                    </div>
+                    <span class="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">MedSentinel</span>
+                </a>
+                <div class="flex items-center space-x-3">
+                    <a href="/" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white">Home</a>
+                    <a href="/hospitals.html" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white">Hospitals</a>
+                    <a href="/schemes.html" class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white">Schemes</a>
+                    <a href="/comparison.html" class="px-4 py-2 text-sm font-medium text-blue-400">Comparison</a>
+                    <button onclick="logout()" class="px-3 py-2 text-sm font-medium text-white bg-red-600/80 hover:bg-red-700 rounded-lg transition-all flex items-center space-x-1">
+                        <span class="material-symbols-rounded text-sm">logout</span>
+                        <span class="hidden sm:inline">Logout</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <header class="mb-16">
+            <h1 id="pageTitle" class="text-5xl font-extrabold mb-4 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">Cost Intelligence Dashboard</h1>
+            <p id="pageDescription" class="text-gray-400 text-lg max-w-2xl">Precision comparison of treatment costs across top-tier medical institutions. Data verified by Government Health Authorities.</p>
+        </header>
+
+        <div class="grid md:grid-cols-3 gap-6 mb-8">
+            <div class="md:col-span-2 bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl p-8 rounded-2xl border border-white/10">
+                <h4 class="font-bold text-lg mb-6 flex items-center gap-2">
+                    <span class="material-symbols-rounded text-blue-400">bar_chart</span>
+                    <span id="chartTitle">Cost Distribution Analysis</span>
+                </h4>
+                <div id="comparisonContent" class="space-y-6"></div>
+            </div>
+
+            <div class="bg-gradient-to-br from-green-500/20 to-emerald-500/20 backdrop-blur-xl p-8 rounded-2xl relative overflow-hidden border border-green-500/30">
+                <span class="bg-green-500/90 text-white text-xs font-bold px-2 py-1 rounded-lg uppercase">Best Value</span>
+                <h4 id="bestValueTitle" class="text-2xl font-bold mt-4">City General Hospital</h4>
+                <p id="bestValueDescription" class="text-sm text-gray-300 mt-2">Highest saving found relative to quality rating.</p>
+                <div class="mt-8">
+                    <p class="text-xs font-bold uppercase text-gray-400">You Save</p>
+                    <p id="savingsAmount" class="text-green-400 text-3xl font-black">₹65,000</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="comparisonTable" class="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl rounded-2xl overflow-hidden border border-white/10 mb-8">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="bg-white/5 border-b border-white/10">
+                            <th class="p-6 font-bold text-gray-400">Metric</th>
+                            <th class="p-6 font-bold">St. Jude Medical</th>
+                            <th class="p-6 font-bold">Apollo Multispeciality</th>
+                            <th class="p-6 font-bold bg-blue-500/10">City General</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-white/10">
+                        <tr>
+                            <td class="p-6 font-semibold text-sm">Total Procedure Cost</td>
+                            <td class="p-6">
+                                <p class="text-lg font-bold">₹1,45,000</p>
+                                <p class="text-xs text-gray-400">All-inclusive</p>
+                            </td>
+                            <td class="p-6">
+                                <p class="text-lg font-bold">₹2,10,000</p>
+                                <p class="text-xs text-gray-400">Plus diagnostics</p>
+                            </td>
+                            <td class="p-6 bg-blue-500/10">
+                                <p class="text-lg font-bold text-green-400">₹1,20,000</p>
+                                <p class="text-xs text-green-400 font-medium">Cheapest Option</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="p-6 font-semibold text-sm">Patient Rating</td>
+                            <td class="p-6">
+                                <div class="flex items-center gap-1 text-yellow-400">
+                                    <span class="material-symbols-rounded text-sm">star</span>
+                                    <span class="material-symbols-rounded text-sm">star</span>
+                                    <span class="material-symbols-rounded text-sm">star</span>
+                                    <span class="material-symbols-rounded text-sm">star</span>
+                                    <span class="font-bold ml-1 text-white">4.2</span>
+                                </div>
+                            </td>
+                            <td class="p-6">
+                                <div class="flex items-center gap-1 text-yellow-400">
+                                    <span class="material-symbols-rounded text-sm">star</span>
+                                    <span class="material-symbols-rounded text-sm">star</span>
+                                    <span class="material-symbols-rounded text-sm">star</span>
+                                    <span class="material-symbols-rounded text-sm">star</span>
+                                    <span class="material-symbols-rounded text-sm">star</span>
+                                    <span class="font-bold ml-1 text-white">4.8</span>
+                                </div>
+                            </td>
+                            <td class="p-6 bg-blue-500/10">
+                                <div class="flex items-center gap-1 text-yellow-400">
+                                    <span class="material-symbols-rounded text-sm">star</span>
+                                    <span class="material-symbols-rounded text-sm">star</span>
+                                    <span class="material-symbols-rounded text-sm">star</span>
+                                    <span class="material-symbols-rounded text-sm">star</span>
+                                    <span class="font-bold ml-1 text-white">4.0</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="p-6 font-semibold text-sm">Govt Schemes</td>
+                            <td class="p-6">
+                                <span class="bg-blue-500/20 text-blue-400 text-xs font-bold px-2 py-0.5 rounded border border-blue-500/30">Ayushman Bharat</span>
+                            </td>
+                            <td class="p-6">
+                                <span class="bg-blue-500/20 text-blue-400 text-xs font-bold px-2 py-0.5 rounded border border-blue-500/30">CGHS Verified</span>
+                            </td>
+                            <td class="p-6 bg-blue-500/10">
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="bg-blue-500/20 text-blue-400 text-xs font-bold px-2 py-0.5 rounded border border-blue-500/30">Ayushman Bharat</span>
+                                    <span class="bg-blue-500/20 text-blue-400 text-blue-400 text-xs font-bold px-2 py-0.5 rounded border border-blue-500/30">State Health Card</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="p-6"></td>
+                            <td class="p-6">
+                                <button class="w-full py-3 rounded-xl border-2 border-white/10 text-white font-bold hover:bg-white/5 transition-all">Select Hospital</button>
+                            </td>
+                            <td class="p-6">
+                                <button class="w-full py-3 rounded-xl border-2 border-white/10 text-white font-bold hover:bg-white/5 transition-all">Select Hospital</button>
+                            </td>
+                            <td class="p-6 bg-blue-500/10">
+                                <button class="w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold hover:shadow-lg hover:shadow-blue-500/50 transition-all">Select & Book</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="bg-gradient-to-br from-blue-500/20 to-purple-500/20 backdrop-blur-xl p-6 rounded-2xl flex items-center gap-6 border border-blue-500/30">
+            <div class="bg-white/10 p-3 rounded-full shadow-sm">
+                <span class="material-symbols-rounded text-blue-400 text-3xl">lightbulb</span>
+            </div>
+            <div>
+                <h5 class="font-bold text-white">MedSentinel Smart Tip</h5>
+                <p class="text-gray-300 text-sm">Choosing City General Hospital could save you enough to cover 12 months of post-operative medication.</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Check URL parameters for comparison type
+        const urlParams = new URLSearchParams(window.location.search);
+        const comparisonType = urlParams.get('type') || 'hospital';
+        const insuranceIds = urlParams.get('ids') ? urlParams.get('ids').split(',') : [];
+
+        if (comparisonType === 'insurance') {
+            loadInsuranceComparison(insuranceIds);
+        } else {
+            loadHospitalComparison();
+        }
+
+        async function loadInsuranceComparison(ids) {
+            if (!ids || ids.length === 0) {
+                // Default insurance IDs for comparison
+                ids = ['1', '2', '3'];
+            }
+
+            try {
+                const response = await fetch('/api/insurances');
+                const allInsurances = await response.json();
+                const selectedInsurances = allInsurances.filter(i => ids.includes(i.id.toString()));
+
+                if (selectedInsurances.length === 0) {
+                    document.getElementById('comparisonContent').innerHTML = '<p class="text-gray-400">No insurance plans found for comparison.</p>';
+                    return;
+                }
+
+                // Update page title and description
+                document.getElementById('pageTitle').textContent = 'Insurance Plan Comparison';
+                document.getElementById('pageDescription').textContent = 'Compare insurance plans to find the best coverage for your healthcare needs.';
+
+                // Update chart title
+                document.getElementById('chartTitle').textContent = 'Premium Comparison Analysis';
+
+                // Generate comparison chart
+                document.getElementById('comparisonContent').innerHTML = selectedInsurances.map(insurance => `
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-sm font-medium">
+                            <span>${insurance.name}</span>
+                            <span class="text-blue-400 font-bold">₹${insurance.premium_monthly.toLocaleString()}/month</span>
+                        </div>
+                        <div class="w-full h-3 bg-white/10 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-blue-500 to-purple-500" style="width: ${Math.min(100, (insurance.premium_monthly / Math.max(...selectedInsurances.map(i => i.premium_monthly))) * 100)}%;"></div>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Update best value section
+                const cheapest = selectedInsurances.reduce((min, i) => i.premium_monthly < min.premium_monthly ? i : min);
+                document.getElementById('bestValueTitle').textContent = cheapest.name;
+                document.getElementById('bestValueDescription').textContent = 'Lowest monthly premium with comprehensive coverage.';
+                document.getElementById('savingsAmount').textContent = `₹${(Math.max(...selectedInsurances.map(i => i.premium_monthly)) - cheapest.premium_monthly).toLocaleString()}`;
+
+                // Generate comparison table
+                document.getElementById('comparisonTable').innerHTML = `
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr class="bg-white/5 border-b border-white/10">
+                                    <th class="p-6 font-bold text-gray-400">Feature</th>
+                                    ${selectedInsurances.map((i, idx) => `<th class="p-6 font-bold ${idx === 0 ? 'bg-blue-500/10' : ''}">${i.name}</th>`).join('')}
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-white/10">
+                                <tr>
+                                    <td class="p-6 font-semibold text-sm">Coverage Amount</td>
+                                    ${selectedInsurances.map((i, idx) => `<td class="p-6 ${idx === 0 ? 'bg-blue-500/10' : ''}"><p class="text-lg font-bold">₹${(i.coverage_amount / 100000).toFixed(1)}L</p></td>`).join('')}
+                                </tr>
+                                <tr>
+                                    <td class="p-6 font-semibold text-sm">Monthly Premium</td>
+                                    ${selectedInsurances.map((i, idx) => `<td class="p-6 ${idx === 0 ? 'bg-blue-500/10' : ''}"><p class="text-lg font-bold text-blue-400">₹${i.premium_monthly.toLocaleString()}</p></td>`).join('')}
+                                </tr>
+                                <tr>
+                                    <td class="p-6 font-semibold text-sm">Annual Premium</td>
+                                    ${selectedInsurances.map((i, idx) => `<td class="p-6 ${idx === 0 ? 'bg-blue-500/10' : ''}"><p class="text-lg font-bold">₹${i.premium_annual.toLocaleString()}</p></td>`).join('')}
+                                </tr>
+                                <tr>
+                                    <td class="p-6 font-semibold text-sm">Cashless Network</td>
+                                    ${selectedInsurances.map((i, idx) => `<td class="p-6 ${idx === 0 ? 'bg-blue-500/10' : ''}"><p class="text-lg font-bold text-green-400">${i.cashless_network.toLocaleString()}+ hospitals</p></td>`).join('')}
+                                </tr>
+                                <tr>
+                                    <td class="p-6 font-semibold text-sm">Claim Settlement</td>
+                                    ${selectedInsurances.map((i, idx) => `<td class="p-6 ${idx === 0 ? 'bg-blue-500/10' : ''}"><p class="text-lg font-bold">${i.claim_settlement_days} days</p></td>`).join('')}
+                                </tr>
+                                <tr>
+                                    <td class="p-6"></td>
+                                    ${selectedInsurances.map((i, idx) => `<td class="p-6 ${idx === 0 ? 'bg-blue-500/10' : ''}"><button onclick="viewInsuranceDetails(${i.id})" class="w-full py-3 rounded-xl ${idx === 0 ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold hover:shadow-lg hover:shadow-blue-500/50' : 'border-2 border-white/10 text-white font-bold hover:bg-white/5'} transition-all">View Details</button></td>`).join('')}
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+
+            } catch (error) {
+                console.error('Error loading insurance comparison:', error);
+                document.getElementById('comparisonContent').innerHTML = '<p class="text-red-400">Error loading insurance comparison.</p>';
+            }
+        }
+
+        function loadHospitalComparison() {
+            const hospitals = [
+                { name: 'St. Jude Medical Center', cost: 145000, percentage: 65 },
+                { name: 'Apollo Multispeciality', cost: 210000, percentage: 90 },
+                { name: 'City General Hospital', cost: 120000, percentage: 50 }
+            ];
+
+            document.getElementById('comparisonContent').innerHTML = hospitals.map(h => `
+                <div class="space-y-2">
+                    <div class="flex justify-between text-sm font-medium">
+                        <span>${h.name}</span>
+                        <span class="text-blue-400 font-bold">₹${h.cost.toLocaleString()}</span>
+                    </div>
+                    <div class="w-full h-3 bg-white/10 rounded-full overflow-hidden">
+                        <div class="h-full ${h.percentage === 50 ? 'bg-gradient-to-r from-green-500 to-emerald-500' : 'bg-gradient-to-r from-blue-500 to-purple-500'}" style="width: ${h.percentage}%;"></div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function viewInsuranceDetails(insuranceId) {
+            window.location.href = `/insurance-details.html?id=${insuranceId}`;
+        }
+
+        function logout() {
+            localStorage.removeItem('userId');
+            localStorage.removeItem('userName');
+            window.location.href = '/login.html';
+        }
+    </script>
+    <script src="/js/main.js"></script>
+</body>
+</html>
