@@ -1,0 +1,151 @@
+Hospital_ID,Hospital_Name,Location,Price_Per_Day
+1,Sunrise Hospital 1,"Jayanagar, Bangalore",2197
+2,Columbia Asia Hospital 2,"KR Market, Bangalore",4772
+3,Fortis Hospital 3,"Electronic City, Bangalore",3654
+4,MedStar Hospital 4,"Marathahalli, Bangalore",3773
+5,GreenView Hospital 5,"Rajajinagar, Bangalore",2732
+6,HealthPlus Hospital 6,"Shivajinagar, Bangalore",2454
+7,Sunrise Hospital 7,"HSR Layout, Bangalore",2467
+8,Hope Hospital 8,"Rajajinagar, Bangalore",3688
+9,Fortis Hospital 9,"Banashankari, Bangalore",4347
+10,Hope Hospital 10,"HSR Layout, Bangalore",1038
+11,LifeCare Hospital 11,"Whitefield, Bangalore",4586
+12,Unity Hospital 12,"Malleshwaram, Bangalore",1403
+13,GreenView Hospital 13,"Shivajinagar, Bangalore",1803
+14,Sunrise Hospital 14,"Electronic City, Bangalore",4485
+15,MedStar Hospital 15,"Malleshwaram, Bangalore",1807
+16,HealthPlus Hospital 16,"HSR Layout, Bangalore",4773
+17,LifeCare Hospital 17,"Kengeri, Bangalore",4836
+18,MedStar Hospital 18,"Indiranagar, Bangalore",2116
+19,GreenView Hospital 19,"Hebbal, Bangalore",2177
+20,Columbia Asia Hospital 20,"Whitefield, Bangalore",2681
+21,Aster Hospital 21,"KR Market, Bangalore",1309
+22,MedStar Hospital 22,"Whitefield, Bangalore",1143
+23,Fortis Hospital 23,"Malleshwaram, Bangalore",3598
+24,Unity Hospital 24,"Hebbal, Bangalore",3779
+25,Aster Hospital 25,"Banashankari, Bangalore",4503
+26,Columbia Asia Hospital 26,"Rajajinagar, Bangalore",1260
+27,Sunrise Hospital 27,"Electronic City, Bangalore",2155
+28,LifeCare Hospital 28,"Jayanagar, Bangalore",933
+29,Fortis Hospital 29,"Electronic City, Bangalore",1940
+30,Aster Hospital 30,"KR Market, Bangalore",4973
+31,Apollo Hospital 31,"Marathahalli, Bangalore",1214
+32,LifeCare Hospital 32,"Hebbal, Bangalore",1270
+33,Hope Hospital 33,"Rajajinagar, Bangalore",2755
+34,Aster Hospital 34,"KR Market, Bangalore",1604
+35,GreenView Hospital 35,"HSR Layout, Bangalore",4284
+36,Hope Hospital 36,"HSR Layout, Bangalore",3469
+37,Global Hospital 37,"Marathahalli, Bangalore",3766
+38,Unity Hospital 38,"Malleshwaram, Bangalore",809
+39,HealthPlus Hospital 39,"Banashankari, Bangalore",1278
+40,Aster Hospital 40,"HSR Layout, Bangalore",1145
+41,Care Hospital 41,"KR Market, Bangalore",1616
+42,GreenView Hospital 42,"Kengeri, Bangalore",2405
+43,Apollo Hospital 43,"Banashankari, Bangalore",1969
+44,Global Hospital 44,"Malleshwaram, Bangalore",2175
+45,Fortis Hospital 45,"Marathahalli, Bangalore",2525
+46,Fortis Hospital 46,"Yelahanka, Bangalore",4419
+47,Fortis Hospital 47,"Jayanagar, Bangalore",3768
+48,MedStar Hospital 48,"Banashankari, Bangalore",972
+49,Unity Hospital 49,"Electronic City, Bangalore",1935
+50,Unity Hospital 50,"Whitefield, Bangalore",4128
+51,Hope Hospital 51,"Hebbal, Bangalore",1732
+52,GreenView Hospital 52,"Jayanagar, Bangalore",2379
+53,GreenView Hospital 53,"Banashankari, Bangalore",3890
+54,Global Hospital 54,"Hebbal, Bangalore",4642
+55,Aster Hospital 55,"HSR Layout, Bangalore",2917
+56,Columbia Asia Hospital 56,"Indiranagar, Bangalore",1245
+57,Care Hospital 57,"Shivajinagar, Bangalore",3734
+58,Aster Hospital 58,"BTM Layout, Bangalore",1730
+59,Hope Hospital 59,"HSR Layout, Bangalore",3901
+60,GreenView Hospital 60,"Jayanagar, Bangalore",2155
+61,Manipal Hospital 61,"Kengeri, Bangalore",1138
+62,MedStar Hospital 62,"Electronic City, Bangalore",1913
+63,Aster Hospital 63,"Electronic City, Bangalore",2967
+64,Manipal Hospital 64,"Banashankari, Bangalore",1924
+65,Hope Hospital 65,"Rajajinagar, Bangalore",997
+66,Unity Hospital 66,"Indiranagar, Bangalore",1703
+67,Sunrise Hospital 67,"Kengeri, Bangalore",2508
+68,Sunrise Hospital 68,"KR Market, Bangalore",2101
+69,Care Hospital 69,"Hebbal, Bangalore",3993
+70,Apollo Hospital 70,"Rajajinagar, Bangalore",1718
+71,LifeCare Hospital 71,"KR Market, Bangalore",4225
+72,Columbia Asia Hospital 72,"Kengeri, Bangalore",3048
+73,HealthPlus Hospital 73,"Banashankari, Bangalore",4874
+74,LifeCare Hospital 74,"Banashankari, Bangalore",1977
+75,Care Hospital 75,"Marathahalli, Bangalore",3695
+76,LifeCare Hospital 76,"KR Market, Bangalore",4878
+77,Hope Hospital 77,"Indiranagar, Bangalore",4505
+78,Columbia Asia Hospital 78,"Whitefield, Bangalore",4851
+79,Columbia Asia Hospital 79,"KR Market, Bangalore",1924
+80,Unity Hospital 80,"Electronic City, Bangalore",2676
+81,HealthPlus Hospital 81,"Yelahanka, Bangalore",4774
+82,Aster Hospital 82,"Electronic City, Bangalore",2303
+83,MedStar Hospital 83,"Hebbal, Bangalore",3798
+84,Global Hospital 84,"Marathahalli, Bangalore",4537
+85,HealthPlus Hospital 85,"BTM Layout, Bangalore",3707
+86,Hope Hospital 86,"Shivajinagar, Bangalore",4333
+87,HealthPlus Hospital 87,"Indiranagar, Bangalore",3099
+88,Aster Hospital 88,"Indiranagar, Bangalore",4724
+89,Aster Hospital 89,"HSR Layout, Bangalore",2682
+90,HealthPlus Hospital 90,"Kengeri, Bangalore",2147
+91,MedStar Hospital 91,"Yelahanka, Bangalore",1532
+92,Sunrise Hospital 92,"Rajajinagar, Bangalore",3623
+93,MedStar Hospital 93,"Hebbal, Bangalore",3354
+94,Manipal Hospital 94,"HSR Layout, Bangalore",2378
+95,Sunrise Hospital 95,"Indiranagar, Bangalore",1675
+96,Columbia Asia Hospital 96,"Jayanagar, Bangalore",3111
+97,Columbia Asia Hospital 97,"Jayanagar, Bangalore",1501
+98,LifeCare Hospital 98,"Indiranagar, Bangalore",4903
+99,GreenView Hospital 99,"Malleshwaram, Bangalore",3848
+100,Aster Hospital 100,"Hebbal, Bangalore",4802
+101,Unity Hospital 101,"Marathahalli, Bangalore",4570
+102,Sunrise Hospital 102,"HSR Layout, Bangalore",1673
+103,Unity Hospital 103,"Indiranagar, Bangalore",4274
+104,LifeCare Hospital 104,"Whitefield, Bangalore",4726
+105,Manipal Hospital 105,"Indiranagar, Bangalore",2058
+106,LifeCare Hospital 106,"HSR Layout, Bangalore",4267
+107,HealthPlus Hospital 107,"Banashankari, Bangalore",4508
+108,Global Hospital 108,"Marathahalli, Bangalore",4215
+109,Sunrise Hospital 109,"Yelahanka, Bangalore",1506
+110,Apollo Hospital 110,"Rajajinagar, Bangalore",4148
+111,MedStar Hospital 111,"Rajajinagar, Bangalore",3064
+112,Fortis Hospital 112,"BTM Layout, Bangalore",2406
+113,City Hospital 113,"Rajajinagar, Bangalore",2622
+114,Hope Hospital 114,"Malleshwaram, Bangalore",1372
+115,HealthPlus Hospital 115,"Rajajinagar, Bangalore",2915
+116,Apollo Hospital 116,"HSR Layout, Bangalore",1086
+117,Hope Hospital 117,"KR Market, Bangalore",4674
+118,Sunrise Hospital 118,"Electronic City, Bangalore",4714
+119,Hope Hospital 119,"BTM Layout, Bangalore",1905
+120,Hope Hospital 120,"Indiranagar, Bangalore",4990
+121,Aster Hospital 121,"KR Market, Bangalore",1968
+122,Aster Hospital 122,"Yelahanka, Bangalore",1447
+123,Global Hospital 123,"KR Market, Bangalore",4739
+124,Columbia Asia Hospital 124,"Marathahalli, Bangalore",3478
+125,Care Hospital 125,"Whitefield, Bangalore",4209
+126,LifeCare Hospital 126,"Kengeri, Bangalore",4392
+127,Unity Hospital 127,"Rajajinagar, Bangalore",4983
+128,GreenView Hospital 128,"Whitefield, Bangalore",3928
+129,HealthPlus Hospital 129,"HSR Layout, Bangalore",1289
+130,LifeCare Hospital 130,"Kengeri, Bangalore",4204
+131,GreenView Hospital 131,"Whitefield, Bangalore",1892
+132,Aster Hospital 132,"Yelahanka, Bangalore",3814
+133,Hope Hospital 133,"Banashankari, Bangalore",1083
+134,Care Hospital 134,"KR Market, Bangalore",4413
+135,City Hospital 135,"HSR Layout, Bangalore",3353
+136,Hope Hospital 136,"KR Market, Bangalore",2242
+137,Sunrise Hospital 137,"KR Market, Bangalore",4796
+138,City Hospital 138,"Jayanagar, Bangalore",4145
+139,HealthPlus Hospital 139,"Banashankari, Bangalore",3712
+140,Care Hospital 140,"Malleshwaram, Bangalore",3858
+141,LifeCare Hospital 141,"Indiranagar, Bangalore",2774
+142,GreenView Hospital 142,"KR Market, Bangalore",3813
+143,HealthPlus Hospital 143,"Rajajinagar, Bangalore",3076
+144,MedStar Hospital 144,"BTM Layout, Bangalore",3574
+145,Care Hospital 145,"Jayanagar, Bangalore",2166
+146,Sunrise Hospital 146,"Malleshwaram, Bangalore",4156
+147,Manipal Hospital 147,"Banashankari, Bangalore",3858
+148,Apollo Hospital 148,"BTM Layout, Bangalore",4170
+149,Manipal Hospital 149,"Malleshwaram, Bangalore",1584
+150,Manipal Hospital 150,"Yelahanka, Bangalore",4898
