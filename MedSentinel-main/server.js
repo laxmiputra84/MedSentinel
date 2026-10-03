@@ -8,7 +8,6 @@ import { fileURLToPath } from 'url';
 import multer from 'multer';
 import fs from 'fs';
 
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -137,16 +136,8 @@ db.serialize(() => {
     cost_range TEXT,
     schemes TEXT,
     image_url TEXT,
-    facilities TEXT,
-    hospital_type TEXT DEFAULT 'private'
+    facilities TEXT
   )`);
-
-  // Add hospital_type column if it doesn't exist
-  db.all("PRAGMA table_info(hospitals)", (err, columns) => {
-    if (!err && columns && !columns.some(c => c.name === 'hospital_type')) {
-      db.run('ALTER TABLE hospitals ADD COLUMN hospital_type TEXT DEFAULT "private"');
-    }
-  });
 
   db.run(`CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -203,8 +194,6 @@ db.serialize(() => {
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
 
-  db.run('CREATE UNIQUE INDEX IF NOT EXISTS idx_appointments_date_time ON appointments(preferred_date, preferred_time)');
-
   db.run(`CREATE TABLE IF NOT EXISTS insurances (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -260,76 +249,46 @@ db.serialize(() => {
 
   // Insert sample data
   const hospitals = [
-    // Private Hospitals (Higher cost)
-    ['Apollo Multispeciality', 'Navi Mumbai', 'Multispecialty', 4.8, 2.4, '₹85,000 - ₹1,25,000', 'Ayushman Bharat (PM-JAY),ESIC,Arogya Karnataka', 'hospital1.jpg', '24/7 ER,ICU,Pharmacy', 'private'],
-    ['Fortis Healthcare', 'Mulund West', 'Cardiology', 4.6, 5.1, '₹92,000 - ₹1,50,000', 'CGHS,Ayushman Bharat (PM-JAY),BPL Welfare', 'hospital2.jpg', '24/7 ER,Cardiac Lab', 'private'],
-    ['Max Super Speciality', 'South Delhi', 'Multispecialty', 4.8, 1.2, '₹1,45,000 - ₹2,25,000', 'Ayushman Bharat (PM-JAY),CGHS,RSBY', 'hospital3.jpg', '24/7 ER,ICU,Diagnostics', 'private'],
-    ['Manipal Hospitals', 'Whitefield', 'Cardiology', 4.9, 5.1, '₹1,82,000 - ₹2,80,000', 'Ayushman Bharat (PM-JAY),CGHS,Yashaswini Health Scheme', 'hospital4.jpg', 'Cardiac Care,ICU', 'private'],
-    ['Narayana Health', 'Hosur Road', 'Cardiac', 4.7, 12, '₹1,15,000 - ₹1,75,000', 'Ayushman Bharat (PM-JAY),Senior Citizen Health Scheme', 'hospital5.jpg', 'Cardiac Surgery,ICU', 'private'],
-    ['Kokilaben Dhirubhai Ambani Hospital', 'Mumbai', 'Surgery', 4.8, 8.5, '₹1,50,000 - ₹2,50,000', 'Ayushman Bharat (PM-JAY),Yashaswini Health Scheme', 'hospital9.jpg', 'Multi-specialty Surgery,ICU,24/7 ER', 'private'],
-    ['Aster CMI Hospital', 'Hebbal, Bengaluru', 'Endocrinology', 4.6, 4.2, '₹75,000 - ₹1,10,000', 'Ayushman Bharat (PM-JAY),BPL Welfare', 'hospital6.jpg', 'Endocrine Care,24/7 ER,ICU,Diagnostic Lab', 'private'],
-    ['Columbia Asia', 'Hebbal, Bengaluru', 'Orthopedics', 4.5, 4.8, '₹68,000 - ₹95,000', 'Ayushman Bharat (PM-JAY),CGHS,Arogya Karnataka', 'hospital7.jpg', 'Joint Care,Physiotherapy,Pharmacy', 'private'],
-    ['Manipal Hospital', 'Whitefield, Bengaluru', 'General Medicine', 4.7, 5.0, '₹65,000 - ₹90,000', 'Ayushman Bharat (PM-JAY),ESIC', 'hospital8.jpg', 'Emergency Care,Pharmacy,Diagnostics', 'private'],
-
-    // Government Hospitals (Lower cost)
-    ['All India Institute of Medical Sciences (AIIMS)', 'New Delhi', 'Multispecialty', 4.5, 3.2, '₹15,000 - ₹35,000', 'Ayushman Bharat (PM-JAY),CGHS,Arogya Karnataka,Rashtriya Swasthya Bima Yojana (RSBY)', 'govt1.jpg', '24/7 ER,Government Schemes,Affordable Care', 'government'],
-    ['Safdarjung Hospital', 'New Delhi', 'General Medicine', 4.2, 4.1, '₹8,000 - ₹25,000', 'Ayushman Bharat (PM-JAY),CGHS,ESIC,Senior Citizen Health Scheme', 'govt2.jpg', 'Emergency Care,Government Schemes,Low Cost', 'government'],
-    ['Lok Nayak Jai Prakash Narayan Hospital', 'New Delhi', 'Multispecialty', 4.0, 5.5, '₹12,000 - ₹30,000', 'Ayushman Bharat (PM-JAY),CGHS,ESIC,BPL Welfare', 'govt3.jpg', 'Trauma Care,Emergency,Government Schemes', 'government'],
-    ['Ram Manohar Lohia Hospital', 'New Delhi', 'Cardiology', 4.1, 6.2, '₹10,000 - ₹28,000', 'Ayushman Bharat (PM-JAY),CGHS,Arogya Karnataka,Senior Citizen Health Scheme', 'govt4.jpg', 'Cardiac Care,Emergency,Government Schemes', 'government'],
-    ['Lady Hardinge Medical College', 'New Delhi', 'Maternity', 4.3, 7.1, '₹5,000 - ₹18,000', 'Ayushman Bharat (PM-JAY),CGHS,ESIC', 'govt5.jpg', 'Maternity Care,Women Health,Government Schemes', 'government'],
-    ['Rajiv Gandhi Super Speciality Hospital', 'New Delhi', 'Surgery', 4.4, 8.3, '₹18,000 - ₹40,000', 'Ayushman Bharat (PM-JAY),CGHS,Arogya Karnataka,Rashtriya Swasthya Bima Yojana (RSBY)', 'govt6.jpg', 'Super Speciality Surgery,Emergency Care', 'government'],
-    ['Guru Teg Bahadur Hospital', 'New Delhi', 'General Medicine', 3.9, 9.2, '₹6,000 - ₹20,000', 'Ayushman Bharat (PM-JAY),ESIC,CGHS,BPL Welfare', 'govt7.jpg', 'General Medicine,Emergency,Government Care', 'government'],
-    ['Dr. Ram Manohar Lohia Hospital', 'New Delhi', 'Multispecialty', 4.1, 10.5, '₹14,000 - ₹32,000', 'Ayushman Bharat (PM-JAY),CGHS,Senior Citizen Health Scheme', 'govt8.jpg', 'Multi-specialty,Emergency,Government Schemes', 'government'],
-    ['Batra Hospital & Medical Research Centre', 'New Delhi', 'Cancer Care', 4.2, 11.8, '₹25,000 - ₹55,000', 'Ayushman Bharat (PM-JAY),CGHS,Swasthya Sathi', 'govt9.jpg', 'Cancer Treatment,Emergency Care,Government Support', 'government'],
-    ['Institute of Liver and Biliary Sciences', 'New Delhi', 'Hepatology', 4.3, 12.9, '₹20,000 - ₹45,000', 'Ayushman Bharat (PM-JAY),CGHS,Arogya Karnataka', 'govt10.jpg', 'Liver Diseases,Emergency Care,Government Schemes', 'government']
+    ['Apollo Multispeciality', 'Navi Mumbai', 'Multispecialty', 4.8, 2.4, '₹85,000', 'Ayushman Bharat,ESI', 'hospital1.jpg', '24/7 ER,ICU,Pharmacy'],
+    ['Fortis Healthcare', 'Mulund West', 'Cardiology', 4.6, 5.1, '₹92,400', 'CGHS,PMJAY', 'hospital2.jpg', '24/7 ER,Cardiac Lab'],
+    ['Max Super Speciality', 'South Delhi', 'Multispecialty', 4.8, 1.2, '₹145,000', 'Ayushman Bharat,CGHS', 'hospital3.jpg', '24/7 ER,ICU,Diagnostics'],
+    ['Manipal Hospitals', 'Whitefield', 'Cardiology', 4.9, 5.1, '₹182,000', 'PMJAY,CGHS', 'hospital4.jpg', 'Cardiac Care,ICU'],
+    ['Narayana Health', 'Hosur Road', 'Cardiac', 4.7, 12, '₹115,000', 'Ayushman Bharat,NABH', 'hospital5.jpg', 'Cardiac Surgery,ICU'],
+    ['Kokilaben Dhirubhai Ambani Hospital', 'Mumbai', 'Surgery', 4.8, 8.5, '₹150,000', 'Ayushman Bharat,PMJAY', 'hospital9.jpg', 'Multi-specialty Surgery,ICU,24/7 ER'],
+    ['Aster CMI Hospital', 'Hebbal, Bengaluru', 'Endocrinology', 4.6, 4.2, '₹75,000', 'Ayushman Bharat,PMJAY', 'hospital6.jpg', 'Endocrine Care,24/7 ER,ICU,Diagnostic Lab'],
+    ['Columbia Asia', 'Hebbal, Bengaluru', 'Orthopedics', 4.5, 4.8, '₹68,000', 'Ayushman Bharat,CGHS', 'hospital7.jpg', 'Joint Care,Physiotherapy,Pharmacy'],
+    ['Manipal Hospital', 'Whitefield, Bengaluru', 'General Medicine', 4.7, 5.0, '₹65,000', 'Ayushman Bharat,PMJAY', 'hospital8.jpg', 'Emergency Care,Pharmacy,Diagnostics']
   ];
 
-  hospitals.forEach(([name, location, specialization, rating, distance, cost_range, schemes, image_url, facilities, hospital_type]) => {
+  hospitals.forEach(([name, location, specialization, rating, distance, cost_range, schemes, image_url, facilities]) => {
     db.run(
-      `INSERT INTO hospitals (name, location, specialization, rating, distance, cost_range, schemes, image_url, facilities, hospital_type)
-       SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+      `INSERT INTO hospitals (name, location, specialization, rating, distance, cost_range, schemes, image_url, facilities)
+       SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?
        WHERE NOT EXISTS (SELECT 1 FROM hospitals WHERE name = ?)`,
-      [name, location, specialization, rating, distance, cost_range, schemes, image_url, facilities, hospital_type, name]
+      [name, location, specialization, rating, distance, cost_range, schemes, image_url, facilities, name]
     );
-  });
-
-  db.all('SELECT id, schemes FROM hospitals', (err, rows) => {
-    if (!err && rows) {
-      const updateStmt = db.prepare('UPDATE hospitals SET schemes = ? WHERE id = ?');
-      rows.forEach(({ id, schemes }) => {
-        const normalized = schemes
-          .split(',')
-          .map((s) => s.trim())
-          .map((s) => {
-            if (s === 'Ayushman Bharat' || s === 'PMJAY') return 'Ayushman Bharat (PM-JAY)';
-            return s;
-          })
-          .filter((v, i, arr) => arr.indexOf(v) === i)
-          .join(',');
-        if (normalized !== schemes) {
-          updateStmt.run(normalized, id);
-        }
-      });
-      updateStmt.finalize();
-    }
   });
 
   const schemes = [
     ['Ayushman Bharat (PM-JAY)', 'Health cover of Rs. 5 lakhs per family per year', '₹5,00,000', 'Low income families (SECC 2011)', 'National'],
-    ['Central Government Health Scheme (CGHS)', 'Medical cover for central government employees and pensioners', 'Comprehensive', 'Central govt employees and pensioners', 'National'],
-    ['Employees\' State Insurance Scheme (ESIC)', 'Social security and health insurance for workers', 'Comprehensive', 'Employees earning up to ₹21,000/month', 'National'],
     ['MJPJAY Maharashtra', 'State health insurance for Maharashtra residents', '₹1,50,000', 'Yellow/Orange ration card holders', 'State'],
-    ['Arogya Karnataka', 'Health insurance for Karnataka households', 'Up to ₹5,00,000', 'Karnataka residents below poverty line', 'State'],
-    ['Rashtriya Swasthya Bima Yojana (RSBY)', 'Health insurance for below poverty line families', 'Up to ₹30,000', 'BPL card holders', 'National'],
-    ['Swasthya Sathi', 'Health coverage scheme for West Bengal residents', 'Up to ₹5,00,000', 'West Bengal families', 'State'],
-    ['Yashaswini Health Scheme', 'Healthcare cover for rural families in Karnataka', 'Up to ₹1,50,000', 'Karnataka rural families', 'State'],
-    ['BPL Welfare', 'Government support for Below Poverty Line families', 'Subsidized treatment', 'BPL households', 'National'],
-    ['Senior Citizen Health Scheme', 'Special medical support for older adults', 'Senior citizen benefits', 'Age 60+ citizens', 'National']
+    ['ESIC', 'Medical care for insured persons and families', 'Comprehensive', 'Employees earning up to ₹21,000/month', 'National'],
+    ['CGHS', 'Central Government Health Scheme', 'Comprehensive', 'Central Govt employees', 'National']
   ];
 
-  const schemeStmt = db.prepare('INSERT OR IGNORE INTO schemes (name, description, coverage, eligibility, type) VALUES (?, ?, ?, ?, ?)');
-  schemes.forEach(s => schemeStmt.run(s));
+  const schemeStmt = db.prepare(
+    `INSERT INTO schemes (name, description, coverage, eligibility, type)
+     SELECT ?, ?, ?, ?, ?
+     WHERE NOT EXISTS (SELECT 1 FROM schemes WHERE name = ?)`
+  );
+  schemes.forEach(s => schemeStmt.run([...s, s[0]]));
   schemeStmt.finalize();
+
+  // Remove duplicate schemes and enforce unique names
+  db.run(`DELETE FROM schemes WHERE id NOT IN (
+      SELECT MIN(id) FROM schemes GROUP BY name
+    )`);
+  db.run(`CREATE UNIQUE INDEX IF NOT EXISTS idx_schemes_name ON schemes(name)`);
 
   // Insert sample insurance data
   const insurances = [
@@ -342,9 +301,19 @@ db.serialize(() => {
     ['Star Health Secure Plus', 'Star Health', 500000, 1199, 11999, 'Comprehensive', 'Hospitalization,Day Care,Outpatient,Maternity', 'Non-medical treatments', 18, 70, 60, 6500, 30, 'Renewal without medical test,Bonus coverage', 'insurance7.jpg', 4.5]
   ];
 
-  const insuranceStmt = db.prepare('INSERT OR IGNORE INTO insurances (name, provider, coverage_amount, premium_monthly, premium_annual, coverage_type, inclusions, exclusions, eligibility_age_min, eligibility_age_max, waiting_period_days, cashless_network, claim_settlement_days, features, image_url, rating) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-  insurances.forEach(i => insuranceStmt.run(i));
+  const insuranceStmt = db.prepare(
+    `INSERT INTO insurances (name, provider, coverage_amount, premium_monthly, premium_annual, coverage_type, inclusions, exclusions, eligibility_age_min, eligibility_age_max, waiting_period_days, cashless_network, claim_settlement_days, features, image_url, rating)
+     SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+     WHERE NOT EXISTS (SELECT 1 FROM insurances WHERE name = ? AND provider = ?)`
+  );
+  insurances.forEach(i => insuranceStmt.run([...i, i[0], i[1]]));
   insuranceStmt.finalize();
+
+  // Remove any legacy duplicate insurance rows and enforce uniqueness on name + provider
+  db.run(`DELETE FROM insurances WHERE id NOT IN (
+      SELECT MIN(id) FROM insurances GROUP BY name, provider
+    )`);
+  db.run(`CREATE UNIQUE INDEX IF NOT EXISTS idx_insurances_name_provider ON insurances(name, provider)`);
 });
 
 // API Routes
@@ -708,59 +677,25 @@ app.post('/api/book-consultation', async (req, res) => {
     return res.status(400).json({ error: 'Phone not verified. Please verify OTP before booking.' });
   }
 
-  db.get(
-    'SELECT id FROM appointments WHERE preferred_date = ? AND preferred_time = ?',
-    [preferredDate, preferredTime],
-    (err, row) => {
+  const userId = 1; // Replace with authenticated user ID if available
+  db.run(
+    'INSERT INTO appointments (user_id, name, phone, email, preferred_date, preferred_time, department, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+    [userId, name, phone, email, preferredDate, preferredTime, department, reason],
+    async function(err) {
       if (err) {
-        console.error('Booking availability check error:', err);
-        return res.status(500).json({ error: 'Unable to check appointment availability' });
+        console.error('Booking save error:', err);
+        return res.status(500).json({ error: 'Failed to save booking' });
       }
 
-      if (row) {
-        return res.status(409).json({ error: 'This time slot is already booked. Please choose a different time.' });
+      delete verifiedPhones[phone];
+      const smsMessage = `Hi ${name}, your consultation for ${department} is booked on ${preferredDate} at ${preferredTime}. Thank you for choosing MedSentinel.`;
+      const smsResult = await sendSmsNotification(phone, smsMessage);
+
+      if (!smsResult.success) {
+        return res.json({ message: 'Booking confirmed, but SMS was not sent.', smsInfo: smsResult.reason });
       }
 
-      const userId = 1; // Replace with authenticated user ID if available
-      db.run(
-        'INSERT INTO appointments (user_id, name, phone, email, preferred_date, preferred_time, department, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-        [userId, name, phone, email, preferredDate, preferredTime, department, reason],
-        async function(err) {
-          if (err) {
-            console.error('Booking save error:', err);
-            return res.status(500).json({ error: 'Failed to save booking' });
-          }
-
-          delete verifiedPhones[phone];
-          const smsMessage = `Hi ${name}, your consultation for ${department} is booked on ${preferredDate} at ${preferredTime}. Thank you for choosing MedSentinel.`;
-          const smsResult = await sendSmsNotification(phone, smsMessage);
-
-          if (!smsResult.success) {
-            return res.json({ message: 'Booking confirmed, but SMS was not sent.', smsInfo: smsResult.reason });
-          }
-
-          res.json({ message: 'Booking confirmed and SMS sent successfully.' });
-        }
-      );
-    }
-  );
-});
-
-app.get('/api/booked-timeslots', (req, res) => {
-  const { date } = req.query;
-  if (!date) {
-    return res.status(400).json({ error: 'Date is required' });
-  }
-
-  db.all(
-    'SELECT preferred_time FROM appointments WHERE preferred_date = ?',
-    [date],
-    (err, rows) => {
-      if (err) {
-        console.error('Booked timeslots error:', err);
-        return res.status(500).json({ error: 'Unable to fetch booked time slots' });
-      }
-      res.json(rows.map(r => r.preferred_time));
+      res.json({ message: 'Booking confirmed and SMS sent successfully.' });
     }
   );
 });
