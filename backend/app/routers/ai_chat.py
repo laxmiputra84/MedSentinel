@@ -1,6 +1,6 @@
 from typing import List, Optional, Dict, Any
 from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.dependencies.auth import get_current_user
@@ -32,8 +32,7 @@ class AIConversationSummary(BaseModel):
     created_at: str
     message_count: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class AIMessageDetail(BaseModel):
     id: int
@@ -42,8 +41,7 @@ class AIMessageDetail(BaseModel):
     tools_used: Optional[str] = None
     created_at: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 @router.get("/health", response_model=AIHealthResponse)
 def get_ai_health():

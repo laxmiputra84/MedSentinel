@@ -241,7 +241,7 @@ export default function AdminHospitalMediaPage() {
             >
               <div className="relative h-40 bg-black/50 overflow-hidden flex items-center justify-center">
                 <img
-                  src={`http://localhost:8000/${m.file_path}`}
+                  src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/${m.file_path.replace(/^\//, '')}`}
                   alt={m.title || 'Facility Media'}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   onError={(e) => {

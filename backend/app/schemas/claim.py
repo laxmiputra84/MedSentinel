@@ -15,6 +15,17 @@ class ClaimStatusHistoryResponse(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+class FraudAnalysisResponse(BaseModel):
+    fraud_score: int
+    fraud_risk: str # LOW, MEDIUM, HIGH
+    flags: List[str] = []
+    duplicate_docs_detected: Optional[bool] = False
+    duplicate_invoices_detected: Optional[bool] = False
+    reused_hash_detected: Optional[bool] = False
+    patient_mismatch_detected: Optional[bool] = False
+
+    model_config = ConfigDict(from_attributes=True)
+
 class InsuranceClaimCreate(BaseModel):
     insurance_id: Optional[int] = None
     hospital_id: Optional[int] = None
@@ -39,5 +50,6 @@ class InsuranceClaimResponse(BaseModel):
     insurance: Optional[InsuranceResponse] = None
     hospital: Optional[HospitalResponse] = None
     status_history: Optional[List[ClaimStatusHistoryResponse]] = []
+    fraud_analysis: Optional[FraudAnalysisResponse] = None
 
     model_config = ConfigDict(from_attributes=True)

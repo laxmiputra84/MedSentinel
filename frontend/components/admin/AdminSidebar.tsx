@@ -36,8 +36,10 @@ export const AdminSidebar: React.FC<{ isOpen: boolean; onClose: () => void }> = 
     { name: 'Analytics', href: '/admin/analytics', icon: 'monitoring' },
     { name: 'AI Insights', href: '/admin/ai-insights', icon: 'neurology', badge: 'AI' },
     { name: 'AI Monitoring', href: '/admin/ai-monitoring', icon: 'troubleshoot', badge: 'LIVE', roles: ['SUPER_ADMIN'] },
+    { name: 'Plugin Hub', href: '/admin/plugins', icon: 'hub', badge: 'NEW', roles: ['SUPER_ADMIN'] },
     { name: 'Audit Logs', href: '/admin/audit-logs', icon: 'history', roles: ['SUPER_ADMIN'] },
   ];
+
 
   const filteredItems = navItems.filter((item) => {
     if (!item.roles) return true;

@@ -14,6 +14,8 @@ from app.schemas.appointment import (
 )
 from app.dependencies.auth import get_current_user, get_optional_current_user, require_hospital_admin
 from app.services.appointment_service import AppointmentService
+from app.core.events import EventType
+from app.services.event_bus import publish_event
 
 router = APIRouter(prefix="/appointments", tags=["Appointments"])
 
@@ -55,7 +57,7 @@ def create_appointment(
     db: Session = Depends(get_db)
 ):
     """Create a verified appointment booking."""
-    return AppointmentService.create_appointment(
+    appt = AppointmentService.create_appointment(
         db=db,
         name=appointment_in.name,
         phone=appointment_in.phone,
@@ -68,6 +70,18 @@ def create_appointment(
         user_id=current_user.id if current_user else None
     )
 
+    publish_event(
+        event_type=EventType.APPOINTMENT_CREATED.value,
+        entity_id=appt.id,
+        user_id=current_user.id if current_user else None,
+        payload={"department": appt.department, "date": str(appt.preferred_date), "hospital_id": appt.hospital_id},
+        entity_type="appointment",
+        db=db,
+        sync=False,
+    )
+
+    return appt
+
 @router.patch("/{appointment_id}/cancel", response_model=AppointmentResponse)
 def cancel_appointment(
     appointment_id: int,
@@ -76,12 +90,24 @@ def cancel_appointment(
     db: Session = Depends(get_db)
 ):
     """Cancel an appointment with a reason."""
-    return AppointmentService.cancel_appointment(
+    cancelled = AppointmentService.cancel_appointment(
         db=db,
         appointment_id=appointment_id,
         user_or_admin=current_user,
         reason=cancel_in.cancellation_reason or "User cancelled"
     )
+
+    publish_event(
+        event_type=EventType.APPOINTMENT_CANCELLED.value,
+        entity_id=appointment_id,
+        user_id=current_user.id,
+        payload={"reason": cancel_in.cancellation_reason},
+        entity_type="appointment",
+        db=db,
+        sync=False,
+    )
+
+    return cancelled
 
 @router.patch("/{appointment_id}/reschedule", response_model=AppointmentResponse)
 def reschedule_appointment(
@@ -91,7 +117,7 @@ def reschedule_appointment(
     db: Session = Depends(get_db)
 ):
     """Reschedule an existing appointment to a new date and time."""
-    return AppointmentService.reschedule_appointment(
+    rescheduled = AppointmentService.reschedule_appointment(
         db=db,
         appointment_id=appointment_id,
         user_or_admin=current_user,
@@ -99,6 +125,18 @@ def reschedule_appointment(
         new_time=reschedule_in.preferred_time,
         reason=reschedule_in.reason
     )
+
+    publish_event(
+        event_type=EventType.APPOINTMENT_UPDATED.value,
+        entity_id=appointment_id,
+        user_id=current_user.id,
+        payload={"new_date": str(reschedule_in.preferred_date), "new_time": reschedule_in.preferred_time},
+        entity_type="appointment",
+        db=db,
+        sync=False,
+    )
+
+    return rescheduled
 
 @router.patch("/{appointment_id}/status", response_model=AppointmentResponse)
 def update_appointment_status(

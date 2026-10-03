@@ -22,6 +22,31 @@ from app.models.knowledge_base import (
 )
 from app.models.hospital_image import HospitalImage
 from app.models.ai_monitoring import AIRequestLog
+from app.models.patient import Patient
+from app.models.lab_result import LabResult
+from app.models.health_score import HealthScore
+from app.models.fraud_analysis import FraudAnalysis
+from app.models.recommendation import Recommendation
+from app.models.event import Event
+from app.models.agent_task import AgentTask
+from app.models.workflow import (
+    WorkflowInstance,
+    WorkflowStepRecord,
+    WorkflowEventRecord,
+    WorkflowCheckpointRecord,
+    HumanReviewRecord,
+)
+
+from app.models.plugin import (
+    PluginConnection,
+    PluginActionAudit,
+    PluginApprovalRequest,
+    EmergencyControl,
+    PluginWebhookEvent,
+    PluginStatus,
+    ActionRiskLevel,
+    ApprovalStatus,
+)
 
 __all__ = [
     "User",
@@ -47,4 +72,24 @@ __all__ = [
     "KnowledgeProcessingLog",
     "HospitalImage",
     "AIRequestLog",
+    "Patient",
+    "LabResult",
+    "HealthScore",
+    "FraudAnalysis",
+    "Recommendation",
+    "Event",
+    "AgentTask",
+    "WorkflowInstance",
+    "WorkflowStepRecord",
+    "WorkflowEventRecord",
+    "WorkflowCheckpointRecord",
+    "HumanReviewRecord",
+    "PluginConnection",
+    "PluginActionAudit",
+    "PluginApprovalRequest",
+    "EmergencyControl",
+    "PluginStatus",
+    "ActionRiskLevel",
+    "ApprovalStatus",
 ]
+

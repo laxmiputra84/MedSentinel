@@ -1,7 +1,7 @@
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from pydantic import BaseModel
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from app.core.database import get_db
 from app.dependencies.auth import require_any_admin
 from app.models import User, Appointment
@@ -25,7 +25,9 @@ def list_appointments(
     current_admin: User = Depends(require_any_admin)
 ):
     """List and filter patient consultations across all clinics."""
-    query = db.query(Appointment)
+    query = db.query(Appointment).options(
+        joinedload(Appointment.hospital)
+    )
     if status:
         query = query.filter(Appointment.status == status)
     if hospital_id:

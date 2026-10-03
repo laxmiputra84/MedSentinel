@@ -13,6 +13,12 @@ from app.models import (
     ClaimStatusHistory,
     Appointment,
     Notification,
+    Patient,
+    UserDocument,
+    LabResult,
+    HealthScore,
+    FraudAnalysis,
+    Recommendation,
 )
 
 def seed_database():
@@ -89,6 +95,14 @@ def seed_database():
                 )
                 db.add(new_u)
                 print(f"Created user: {u_data['email']} ({u_data['role']})")
+            else:
+                existing_user.hashed_password = get_password_hash(u_data["password"])
+                existing_user.role = u_data["role"]
+                if u_data.get("hospital_id"):
+                    existing_user.hospital_id = u_data["hospital_id"]
+                if u_data.get("insurance_id"):
+                    existing_user.insurance_id = u_data["insurance_id"]
+                print(f"Updated password & credentials for: {u_data['email']}")
         db.commit()
 
         # 2. Seed Hospitals
@@ -340,11 +354,129 @@ def seed_database():
             if not existing_notif:
                 db.add(Notification(
                     user_id=demo_user.id,
-                    title="Welcome to MedSentinel 2.1",
+                    title="Welcome to MedSentinel 2.3",
                     message="Your MySQL-powered health intelligence dashboard is ready.",
                     type="info",
                     is_read=False
                 ))
+                db.commit()
+
+            # Seed Patient record
+            patient = db.query(Patient).filter(Patient.user_id == demo_user.id).first()
+            if not patient:
+                patient = Patient(
+                    user_id=demo_user.id,
+                    patient_code="MS-PAT-2026-0001",
+                    name=demo_user.name,
+                    gender="Male",
+                    blood_group=demo_user.blood_group or "O+",
+                    emergency_contact="+91 98765 00000",
+                    allergies=demo_user.allergies or "None reported",
+                )
+                db.add(patient)
+                db.commit()
+                db.refresh(patient)
+
+            # Seed sample UserDocument
+            sample_doc = db.query(UserDocument).filter(UserDocument.user_id == demo_user.id).first()
+            if not sample_doc:
+                sample_doc = UserDocument(
+                    user_id=demo_user.id,
+                    patient_id=patient.id,
+                    document_code="DOC-2026-0001",
+                    file_hash="e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                    doc_type="Lab Report",
+                    filename="sample_cbc_panel.pdf",
+                    original_name="Comprehensive Blood Count & Metabolic Panel.pdf",
+                    file_path="uploads/sample_cbc_panel.pdf",
+                    file_type="application/pdf",
+                    file_size=245760,
+                    status="APPROVED",
+                    verification_status="VERIFIED",
+                    ai_classification="Lab Report",
+                    ai_confidence=0.98,
+                    ocr_extracted_text="HEMOGLOBIN: 14.5 g/dL (Normal 13.5-17.5)\nWBC: 6800 /mcL (Normal 4500-11000)\nPLATELETS: 245000 /mcL (Normal 150000-450000)\nFASTING GLUCOSE: 95 mg/dL (Normal 70-99)\nHBA1C: 5.4% (Normal < 5.7%)\nCHOLESTEROL TOTAL: 185 mg/dL (Normal < 200)",
+                )
+                db.add(sample_doc)
+                db.commit()
+                db.refresh(sample_doc)
+
+            # Seed sample LabResults
+            existing_labs = db.query(LabResult).filter(LabResult.patient_id == patient.id).count()
+            if existing_labs == 0:
+                labs = [
+                    LabResult(patient_id=patient.id, document_id=sample_doc.id, test_name="Hemoglobin", observed_value=14.5, unit="g/dL", reference_min=13.5, reference_max=17.5, status="NORMAL", is_critical=False),
+                    LabResult(patient_id=patient.id, document_id=sample_doc.id, test_name="White Blood Cells", observed_value=6800.0, unit="/mcL", reference_min=4500.0, reference_max=11000.0, status="NORMAL", is_critical=False),
+                    LabResult(patient_id=patient.id, document_id=sample_doc.id, test_name="Platelet Count", observed_value=245000.0, unit="/mcL", reference_min=150000.0, reference_max=450000.0, status="NORMAL", is_critical=False),
+                    LabResult(patient_id=patient.id, document_id=sample_doc.id, test_name="Fasting Glucose", observed_value=95.0, unit="mg/dL", reference_min=70.0, reference_max=99.0, status="NORMAL", is_critical=False),
+                    LabResult(patient_id=patient.id, document_id=sample_doc.id, test_name="HbA1c", observed_value=5.4, unit="%", reference_min=4.0, reference_max=5.7, status="NORMAL", is_critical=False),
+                ]
+                db.add_all(labs)
+                db.commit()
+
+            # Seed sample HealthScore
+            existing_score = db.query(HealthScore).filter(HealthScore.patient_id == patient.id).first()
+            if not existing_score:
+                h_score = HealthScore(
+                    patient_id=patient.id,
+                    document_id=sample_doc.id,
+                    health_score=87,
+                    risk_score=13,
+                    risk_level="LOW",
+                    abnormal_tests=0,
+                    ai_summary="All biometric markers, metabolic parameters, and hematologic indices are within standard reference ranges.",
+                )
+                db.add(h_score)
+                db.commit()
+
+            # Seed FraudAnalysis for sample claim
+            claim_for_fraud = db.query(InsuranceClaim).filter(InsuranceClaim.user_id == demo_user.id).first()
+            if claim_for_fraud:
+                existing_fa = db.query(FraudAnalysis).filter(FraudAnalysis.claim_id == claim_for_fraud.id).first()
+                if not existing_fa:
+                    db.add(FraudAnalysis(
+                        claim_id=claim_for_fraud.id,
+                        fraud_score=15,
+                        fraud_risk="LOW",
+                        flags='["Patient ID verified with registered policyholder records.", "Hospital is accredited in cashless network.", "Claim amount within approved surgical procedure limits."]',
+                        duplicate_docs_detected=False,
+                        duplicate_invoices_detected=False,
+                        reused_hash_detected=False,
+                        patient_mismatch_detected=False,
+                        suspicious_amount_flag=False,
+                    ))
+                    db.commit()
+
+            # Seed sample Recommendations
+            existing_rec = db.query(Recommendation).filter(Recommendation.user_id == demo_user.id).first()
+            if not existing_rec:
+                recs = [
+                    Recommendation(
+                        user_id=demo_user.id,
+                        patient_id=patient.id,
+                        recommendation_type="LIFESTYLE",
+                        priority="LOW",
+                        title="Annual Preventive Health Checkup Scheduled",
+                        description="Your metabolic and lipid profiles are in optimal ranges. Continue balanced nutrition and maintain 150 minutes of moderate cardiovascular activity weekly.",
+                        reason="Standard routine preventive health guideline for healthy adults.",
+                        confidence=0.94,
+                        sources='["PREVENTIVE_GUIDELINE", "METABOLIC_NORMAL"]',
+                        status="ACTIVE",
+                    ),
+                    Recommendation(
+                        user_id=demo_user.id,
+                        patient_id=patient.id,
+                        recommendation_type="DOCUMENT_FOLLOW_UP",
+                        priority="MEDIUM",
+                        title="Upload Insurance Card Copy to Vault",
+                        description="Keep a digital scan of your active health insurance card in your encrypted Medical Vault for instantaneous hospital admission pre-authorization.",
+                        reason="Medical vault optimization for rapid emergency pre-authorization.",
+                        confidence=0.88,
+                        sources='["VAULT_COMPLETION"]',
+                        status="ACTIVE",
+                    ),
+                ]
+                db.add_all(recs)
                 db.commit()
 
         print("MySQL Database successfully seeded with all initial data!")

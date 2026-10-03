@@ -92,9 +92,17 @@ export default function AdminClaimsPage() {
     setIsLoadingDetail(true);
     setStatusComment('');
     try {
-      const res = await api.get<ClaimDetail>(`/admin/claims/${claimId}`);
-      setClaimDetail(res.data);
-      setNewStatus(res.data.claim_status);
+      const res = await api.get<any>(`/admin/claims/${claimId}`);
+      const raw = res.data;
+      const normalized: ClaimDetail = {
+        ...raw,
+        patient: raw.patient || { id: 0, name: 'Patient', email: 'N/A' },
+        hospital: typeof raw.hospital === 'object' ? raw.hospital : { name: raw.hospital || 'N/A' },
+        insurance: typeof raw.insurance === 'object' ? raw.insurance : { name: raw.insurance || 'N/A' },
+        timeline_history: raw.timeline_history || raw.timeline || [],
+      };
+      setClaimDetail(normalized);
+      setNewStatus(raw.claim_status);
     } catch (err: any) {
       setFeedback({ type: 'error', message: err.response?.data?.detail || 'Failed to load claim details.' });
       setSelectedClaimId(null);
@@ -306,11 +314,11 @@ export default function AdminClaimsPage() {
                   </div>
                   <div>
                     <span className="text-[10px] text-gray-400 font-bold uppercase">Hospital</span>
-                    <p className="text-white font-bold truncate">{claimDetail.hospital.name}</p>
+                    <p className="text-white font-bold truncate">{claimDetail.hospital?.name || (typeof claimDetail.hospital === 'string' ? claimDetail.hospital : 'N/A')}</p>
                   </div>
                   <div>
                     <span className="text-[10px] text-gray-400 font-bold uppercase">Insurance Plan</span>
-                    <p className="text-purple-400 font-bold truncate">{claimDetail.insurance.name}</p>
+                    <p className="text-purple-400 font-bold truncate">{claimDetail.insurance?.name || (typeof claimDetail.insurance === 'string' ? claimDetail.insurance : 'N/A')}</p>
                   </div>
                   <div>
                     <span className="text-[10px] text-gray-400 font-bold uppercase">Claim Amount</span>
@@ -332,10 +340,10 @@ export default function AdminClaimsPage() {
                     <span>Claim Status Audit Trail</span>
                   </h4>
                   <div className="bg-black/30 border border-white/10 rounded-xl p-3 max-h-44 overflow-y-auto space-y-2">
-                    {claimDetail.timeline_history.length === 0 ? (
+                    {(!claimDetail.timeline_history || claimDetail.timeline_history.length === 0) ? (
                       <p className="text-gray-500 text-center py-2">No historical status modifications on record.</p>
                     ) : (
-                      claimDetail.timeline_history.map((h) => (
+                      (claimDetail.timeline_history || []).map((h) => (
                         <div key={h.id} className="flex items-start justify-between gap-3 text-[11px] pb-2 border-b border-white/5 last:border-none">
                           <div>
                             <span className="font-bold text-blue-400">{h.new_status}</span>

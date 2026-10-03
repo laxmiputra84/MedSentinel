@@ -28,7 +28,19 @@ from app.models import (
     KnowledgeAccessRule,
     KnowledgeProcessingLog,
     HospitalImage,
-    AIRequestLog
+    AIRequestLog,
+    Patient,
+    LabResult,
+    HealthScore,
+    FraudAnalysis,
+    Recommendation,
+    Event,
+    AgentTask,
+    WorkflowInstance,
+    WorkflowStepRecord,
+    WorkflowEventRecord,
+    WorkflowCheckpointRecord,
+    HumanReviewRecord,
 )
 
 test_engine = create_engine(

@@ -11,11 +11,15 @@ import asyncio
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Verify MySQL connectivity on startup
+    # Verify MySQL connectivity on startup & ensure schema is up to date
     try:
         with engine.connect() as conn:
             conn.execute(text("SELECT 1"))
         print("Connected to MySQL successfully on startup.")
+        import app.models
+        from app.core.database import Base, sync_database_schema
+        sync_database_schema(engine, Base)
+        print("Database schema verified and synced successfully.")
     except Exception as e:
         print(f"Warning: MySQL database connectivity check: {e}")
 
@@ -29,12 +33,24 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         print(f"Vector store startup hydration note: {e}")
 
+    # Start Event-Driven Agent EventBus Background Worker
+    try:
+        from app.services.event_bus import event_bus
+        event_bus.start()
+        print("Event-Driven Agent EventBus worker started successfully.")
+    except Exception as e:
+        print(f"EventBus startup note: {e}")
+
     try:
         yield
     except (asyncio.CancelledError, GeneratorExit):
         pass
     finally:
-        pass
+        try:
+            from app.services.event_bus import event_bus
+            event_bus.stop()
+        except Exception:
+            pass
 
 # Import all user routers
 from app.routers import (
@@ -51,6 +67,17 @@ from app.routers import (
     notifications,
     analytics,
     ai_chat,
+    health,
+    recommendations,
+    otp,
+    agent_workflow,
+    plugins,
+    webhooks,
+    events,
+    human_review,
+    patient_360,
+    healthcare_analytics,
+    agent_monitor,
 )
 
 # Import admin routers
@@ -109,6 +136,27 @@ app.include_router(documents.router, prefix=settings.API_PREFIX)
 app.include_router(notifications.router, prefix=settings.API_PREFIX)
 app.include_router(analytics.router, prefix=settings.API_PREFIX)
 app.include_router(ai_chat.router, prefix=settings.API_PREFIX)
+app.include_router(health.router, prefix=settings.API_PREFIX)
+app.include_router(recommendations.router, prefix=settings.API_PREFIX)
+app.include_router(otp.router, prefix=settings.API_PREFIX)
+app.include_router(agent_workflow.router, prefix=settings.API_PREFIX)
+app.include_router(events.router, prefix=settings.API_PREFIX)
+app.include_router(human_review.router, prefix=settings.API_PREFIX)
+app.include_router(patient_360.router, prefix=settings.API_PREFIX)
+app.include_router(healthcare_analytics.router, prefix=settings.API_PREFIX)
+app.include_router(agent_monitor.router, prefix=settings.API_PREFIX)
+app.include_router(plugins.router)
+app.include_router(plugins.router, prefix=settings.API_PREFIX)
+app.include_router(plugins.direct_router)
+app.include_router(webhooks.router)
+
+# Also mount documents, health, recommendations, otp, agent_workflow, and events at root to support direct non-prefixed calls
+app.include_router(documents.router)
+app.include_router(health.router)
+app.include_router(recommendations.router)
+app.include_router(otp.router)
+app.include_router(agent_workflow.router)
+app.include_router(events.router)
 
 # Register Admin API Routers under /api
 app.include_router(admin_dashboard.router, prefix=settings.API_PREFIX)
@@ -129,14 +177,15 @@ app.include_router(admin_ai_monitoring.router, prefix=settings.API_PREFIX)
 app.include_router(admin_rag_debug.router, prefix=settings.API_PREFIX)
 
 @app.get("/health", tags=["Health"])
-def health_check():
+@app.get("/server-health", tags=["Health"])
+def server_health_check():
     return {
         "status": "healthy",
         "service": settings.PROJECT_NAME,
         "database": "MySQL",
         "ai_enabled": settings.AI_ENABLED,
         "environment": settings.ENVIRONMENT,
-        "version": "2.2.0"
+        "version": "2.3.0"
     }
 
 @app.get("/", tags=["Root"])
@@ -144,5 +193,5 @@ def root():
     return {
         "message": "Welcome to MedSentinel API with AI Intelligence & Admin Dashboard",
         "docs": "/docs",
-        "health": "/health"
+        "health": "/server-health"
     }

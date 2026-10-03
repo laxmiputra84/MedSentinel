@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { Hospital } from '@/lib/types';
+import { Hospital, SearchIntentMeta } from '@/lib/types';
 import { HospitalCard } from '@/components/HospitalCard';
 import api from '@/lib/api';
 
@@ -33,10 +33,47 @@ function HospitalsContent() {
   const [minRating, setMinRating] = useState<number>(0);
   const [sortBy, setSortBy] = useState<'rating' | 'distance'>('rating');
 
+  const [coords, setCoords] = useState<{ lat: number; lon: number } | null>(null);
+  const [gpsLoading, setGpsLoading] = useState(false);
+  const [searchIntent, setSearchIntent] = useState<SearchIntentMeta | null>(null);
+
   const [hospitals, setHospitals] = useState<Hospital[]>([]);
   const [savedHospitalIds, setSavedHospitalIds] = useState<number[]>([]);
   const [compareIds, setCompareIds] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Toggle user GPS proximity
+  const handleUseMyLocation = () => {
+    if (coords) {
+      setCoords(null);
+      return;
+    }
+    if (typeof window === 'undefined' || !navigator.geolocation) {
+      alert('Geolocation is not supported by your browser.');
+      return;
+    }
+    setGpsLoading(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setCoords({
+          lat: pos.coords.latitude,
+          lon: pos.coords.longitude,
+        });
+        setGpsLoading(false);
+      },
+      (err) => {
+        console.warn('Geolocation unavailable or denied:', err);
+        // Fallback default coordinates at REVA University campus
+        setCoords({
+          lat: 13.1147,
+          lon: 77.6346,
+        });
+        setGpsLoading(false);
+      },
+      { timeout: 5000 }
+    );
+  };
 
   // Fetch saved hospitals
   const fetchSavedHospitals = async () => {
@@ -51,27 +88,54 @@ function HospitalsContent() {
   // Fetch filtered hospitals
   const fetchHospitals = async () => {
     setLoading(true);
+    setError(null);
     try {
       const params: Record<string, string | number> = {};
       if (searchQuery.trim()) params.search = searchQuery.trim();
-      if (selectedLocation) params.location = selectedLocation;
-      if (selectedScheme) params.scheme = selectedScheme;
-      if (maxDistance < 25) params.maxDistance = maxDistance;
+      if (selectedLocation && selectedLocation !== 'All Locations') params.location = selectedLocation;
+      if (selectedScheme && selectedScheme !== 'All Schemes') params.scheme = selectedScheme;
       if (minRating > 0) params.minRating = minRating;
+
+      // Only pass distance and coordinates when GPS is actively enabled
+      if (coords) {
+        params.latitude = coords.lat;
+        params.longitude = coords.lon;
+        if (maxDistance) {
+          params.maxDistance = maxDistance;
+        }
+      }
 
       const res = await api.get<Hospital[]>('/hospitals', { params });
       let data = res.data;
 
-      // Sort client-side for instant snappy response
-      if (sortBy === 'rating') {
-        data.sort((a, b) => b.rating - a.rating);
-      } else if (sortBy === 'distance') {
-        data.sort((a, b) => a.distance - b.distance);
+      // Extract search intent from response headers
+      const searchType = res.headers['x-search-type'] as any;
+      if (searchQuery.trim() || searchType) {
+        setSearchIntent({
+          search_query: searchQuery.trim() || null,
+          search_type: searchType || 'keyword',
+          is_nearby_search: res.headers['x-nearby-intent'] === 'true',
+          detected_location: res.headers['x-detected-location'] || null,
+          detected_specialty: res.headers['x-detected-specialty'] || null,
+          has_coordinates: res.headers['x-has-coordinates'] === 'true',
+        });
+      } else {
+        setSearchIntent(null);
+      }
+
+      // Sort client-side if no GPS coordinates active
+      if (!coords) {
+        if (sortBy === 'rating') {
+          data.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        } else if (sortBy === 'distance') {
+          data.sort((a, b) => (a.distance || 0) - (b.distance || 0));
+        }
       }
 
       setHospitals(data);
     } catch (err) {
       console.error('Error fetching hospitals:', err);
+      setError('Unable to load hospital records. Please check your network connection or try again.');
     } finally {
       setLoading(false);
     }
@@ -86,7 +150,7 @@ function HospitalsContent() {
       fetchHospitals();
     }, 250);
     return () => clearTimeout(timer);
-  }, [searchQuery, selectedLocation, selectedScheme, maxDistance, minRating, sortBy]);
+  }, [searchQuery, selectedLocation, selectedScheme, maxDistance, minRating, sortBy, coords]);
 
   // Handle Save / Unsave
   const handleSaveToggle = async (hospitalId: number) => {
@@ -162,6 +226,8 @@ function HospitalsContent() {
                   setMaxDistance(15);
                   setMinRating(0);
                   setSortBy('rating');
+                  setCoords(null);
+                  setSearchIntent(null);
                 }}
                 className="text-xs text-gray-400 hover:text-blue-400 font-semibold"
               >
@@ -184,6 +250,21 @@ function HospitalsContent() {
                   className="w-full pl-9 pr-3 py-2 bg-gray-900 border border-white/15 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 text-xs"
                 />
               </div>
+              <button
+                type="button"
+                onClick={handleUseMyLocation}
+                disabled={gpsLoading}
+                className={`mt-2 w-full py-1.5 px-3 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 ${
+                  coords
+                    ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30'
+                    : 'bg-white/5 text-gray-300 border border-white/10 hover:text-white hover:bg-white/10'
+                }`}
+              >
+                <span className="material-symbols-outlined text-sm">
+                  {coords ? 'my_location' : 'location_searching'}
+                </span>
+                <span>{gpsLoading ? 'Detecting Location...' : coords ? 'GPS Proximity Active (Clear)' : 'Use GPS Proximity'}</span>
+              </button>
             </div>
 
             {/* Location Selector */}
@@ -195,10 +276,17 @@ function HospitalsContent() {
                 className="w-full px-3 py-2 bg-gray-900 border border-white/15 rounded-xl text-white text-xs focus:outline-none focus:border-blue-500"
               >
                 <option value="">All Locations</option>
-                <option value="Bengaluru">Bengaluru</option>
-                <option value="Indiranagar">Indiranagar, Bengaluru</option>
-                <option value="Bannerghatta">Bannerghatta Road, Bengaluru</option>
-                <option value="Central">Central City</option>
+                <option value="Bengaluru">Bengaluru, Karnataka</option>
+                <option value="Mumbai">Mumbai, Maharashtra</option>
+                <option value="Delhi">New Delhi, NCR</option>
+                <option value="Chennai">Chennai, Tamil Nadu</option>
+                <option value="Hyderabad">Hyderabad / Secunderabad</option>
+                <option value="Pune">Pune, Maharashtra</option>
+                <option value="Kolkata">Kolkata, West Bengal</option>
+                <option value="Ahmedabad">Ahmedabad, Gujarat</option>
+                <option value="Jaipur">Jaipur, Rajasthan</option>
+                <option value="Kochi">Kochi, Kerala</option>
+                <option value="Gurugram">Gurugram, Haryana</option>
               </select>
             </div>
 
@@ -278,6 +366,94 @@ function HospitalsContent() {
 
         {/* Hospital Cards List */}
         <main className="lg:col-span-3">
+          {/* GPS Proximity / Filter Status Banner */}
+          <div className={`mb-6 p-4 rounded-2xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 backdrop-blur-md shadow-lg ${
+            coords
+              ? 'bg-emerald-950/40 border-emerald-500/30'
+              : 'bg-blue-950/30 border-blue-500/20'
+          }`}>
+            <div className="flex items-center gap-3">
+              <span className={`material-symbols-outlined text-2xl p-2 rounded-xl ${
+                coords ? 'bg-emerald-500/20 text-emerald-400' : 'bg-blue-500/20 text-blue-400'
+              }`}>
+                {coords ? 'near_me' : 'explore'}
+              </span>
+              <div>
+                <p className="text-sm font-bold text-white">
+                  {coords ? (
+                    <span>Showing hospitals within {maxDistance} km.</span>
+                  ) : (
+                    <span>Showing hospitals without distance filtering.</span>
+                  )}
+                </p>
+                <p className="text-xs text-gray-400">
+                  {coords ? (
+                    <span>GPS proximity active ({coords.lat.toFixed(4)}, {coords.lon.toFixed(4)}). Ranked nearest first.</span>
+                  ) : (
+                    <span>Enable GPS to find hospitals near you and filter by maximum distance.</span>
+                  )}
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleUseMyLocation}
+              disabled={gpsLoading}
+              className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 ${
+                coords
+                  ? 'bg-emerald-600/30 border border-emerald-500 text-emerald-300 hover:bg-emerald-600/40'
+                  : 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-md'
+              }`}
+            >
+              <span className="material-symbols-outlined text-sm">
+                {coords ? 'my_location' : 'location_searching'}
+              </span>
+              <span>{gpsLoading ? 'Locating...' : coords ? 'GPS Active (Clear)' : 'Use GPS Proximity'}</span>
+            </button>
+          </div>
+
+          {/* Search Intent Banner (if NLP intent detected) */}
+          {searchIntent && (searchIntent.search_query || searchIntent.is_nearby_search) && (
+            <div className="mb-6 p-4 bg-gradient-to-r from-purple-900/30 via-indigo-900/20 to-gray-900/50 border border-purple-500/30 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 backdrop-blur-md">
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-xs text-gray-400 font-semibold">Search Intent:</span>
+                  <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider ${
+                    searchIntent.search_type === 'nearby'
+                      ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40'
+                      : searchIntent.search_type === 'specialty_location'
+                      ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/40'
+                      : searchIntent.search_type === 'location'
+                      ? 'bg-blue-500/20 text-blue-300 border border-blue-500/40'
+                      : searchIntent.search_type === 'specialty'
+                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                      : 'bg-gray-800 text-gray-300 border border-white/10'
+                  }`}>
+                    {searchIntent.search_type === 'nearby' && '📍 Nearby Search'}
+                    {searchIntent.search_type === 'specialty_location' && '🩺 Specialty + Location'}
+                    {searchIntent.search_type === 'location' && '🏙️ Location Search'}
+                    {searchIntent.search_type === 'specialty' && '⚕️ Specialty Search'}
+                    {searchIntent.search_type === 'keyword' && '🔍 Keyword Search'}
+                  </span>
+                  {searchIntent.detected_location && (
+                    <span className="bg-blue-500/20 border border-blue-500/30 text-blue-200 px-2.5 py-0.5 rounded-md text-xs font-medium">
+                      Location: <strong>{searchIntent.detected_location}</strong>
+                    </span>
+                  )}
+                  {searchIntent.detected_specialty && (
+                    <span className="bg-emerald-500/20 border border-emerald-500/30 text-emerald-200 px-2.5 py-0.5 rounded-md text-xs font-medium">
+                      Specialty: <strong>{searchIntent.detected_specialty}</strong>
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs text-gray-400">
+                  Active Query: <span className="text-white font-medium italic">"{searchIntent.search_query}"</span>
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* Top Sorting Bar */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-gray-800/40 p-4 rounded-xl border border-white/5">
             <span className="text-xs text-gray-400">
@@ -308,6 +484,22 @@ function HospitalsContent() {
             </div>
           </div>
 
+          {/* Error Banner */}
+          {error && (
+            <div className="mb-6 p-4 bg-red-500/20 border border-red-500/40 rounded-xl text-red-300 text-xs flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-base">error</span>
+                <span>{error}</span>
+              </div>
+              <button
+                onClick={fetchHospitals}
+                className="px-3 py-1 bg-red-600/60 hover:bg-red-600 text-white font-bold rounded-lg transition-all"
+              >
+                Retry
+              </button>
+            </div>
+          )}
+
           {/* Cards Loading / List */}
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -316,23 +508,60 @@ function HospitalsContent() {
               ))}
             </div>
           ) : hospitals.length === 0 ? (
-            <div className="bg-gray-800/60 rounded-2xl p-12 text-center border border-white/10">
-              <span className="material-symbols-outlined text-gray-500 text-5xl mb-2">domain_disabled</span>
-              <h3 className="text-xl font-bold text-white mb-2">No Hospitals Found</h3>
-              <p className="text-gray-400 text-sm mb-6">
-                Try widening your distance range or searching for broader symptoms.
-              </p>
-              <button
-                onClick={() => {
-                  setSearchQuery('');
-                  setSelectedLocation('');
-                  setSelectedScheme('');
-                  setMaxDistance(25);
-                }}
-                className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition-all shadow-lg"
-              >
-                Clear All Filters
-              </button>
+            <div className="bg-gray-800/60 rounded-2xl p-10 text-center border border-white/10 shadow-2xl">
+              <span className="material-symbols-outlined text-amber-400/80 text-5xl mb-2">domain_disabled</span>
+              <h3 className="text-xl font-bold text-white mb-2 font-['Manrope']">No Hospitals Found</h3>
+              
+              {/* Detailed Specific Reason Box */}
+              <div className="bg-white/5 border border-white/10 rounded-xl p-4 max-w-lg mx-auto mb-6 text-left space-y-2 text-xs text-gray-300">
+                <div className="font-semibold text-gray-200 border-b border-white/10 pb-1.5 flex items-center gap-1.5">
+                  <span className="material-symbols-outlined text-amber-400 text-sm">info</span>
+                  <span>Filtered Reason Analysis:</span>
+                </div>
+                {searchQuery.trim() && (
+                  <p>• No hospitals match search condition: <strong className="text-white">"{searchQuery.trim()}"</strong></p>
+                )}
+                {selectedLocation && selectedLocation !== 'All Locations' && (
+                  <p>• No hospitals found in location: <strong className="text-white">"{selectedLocation}"</strong></p>
+                )}
+                {selectedScheme && selectedScheme !== 'All Schemes' && (
+                  <p>• No hospitals accept empanelled scheme: <strong className="text-white">"{selectedScheme}"</strong></p>
+                )}
+                {minRating > 0 && (
+                  <p>• No hospitals meet the minimum patient rating of <strong className="text-white">{minRating}★</strong></p>
+                )}
+                {coords && maxDistance && (
+                  <p>• No hospitals found within <strong className="text-white">{maxDistance} km</strong> of your GPS coordinates</p>
+                )}
+                {!searchQuery.trim() && !selectedLocation && !selectedScheme && minRating === 0 && (!coords || !maxDistance) && (
+                  <p>• No records found matching the active query criteria. Try clearing search filters.</p>
+                )}
+              </div>
+
+              <div className="flex justify-center gap-3 flex-wrap">
+                <button
+                  onClick={() => {
+                    setSearchQuery('');
+                    setSelectedLocation('');
+                    setSelectedScheme('');
+                    setMaxDistance(15);
+                    setMinRating(0);
+                    setCoords(null);
+                    setSearchIntent(null);
+                  }}
+                  className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold rounded-xl text-xs transition-all shadow-lg"
+                >
+                  Clear All Filters
+                </button>
+                {coords && (
+                  <button
+                    onClick={() => setCoords(null)}
+                    className="px-4 py-2.5 bg-white/10 hover:bg-white/15 text-gray-200 font-semibold rounded-xl text-xs transition-all border border-white/10"
+                  >
+                    Disable GPS Distance Filter
+                  </button>
+                )}
+              </div>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

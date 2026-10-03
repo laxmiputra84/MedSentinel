@@ -88,3 +88,40 @@ class AISafetyGuard:
 # Export standard alias
 AISafety = AISafetyGuard
 
+class ExternalContentSanitizer:
+    """
+    Zero-Trust External Content Sanitizer.
+    Enforces strict structural boundaries between System Prompts and
+    untrusted external data (emails, WhatsApp messages, OCR text, spreadsheets, webhooks).
+    Wraps content in <EXTERNAL_UNTRUSTED_DATA> blocks and neutralizes instruction-injection payloads.
+    """
+
+    @classmethod
+    def sanitize(cls, raw_content: str, source: str = "EXTERNAL_CONNECTOR") -> str:
+        if not raw_content:
+            return ""
+
+        # 1. Neutralize explicit injection strings
+        sanitized = raw_content
+        for pattern in PROMPT_INJECTION_PATTERNS:
+            sanitized = re.sub(pattern, "[MALICIOUS_OVERRIDE_ATTEMPT_DEFUSED]", sanitized)
+
+        # 2. Prevent boundary breakout tags
+        sanitized = sanitized.replace("</EXTERNAL_UNTRUSTED_DATA>", "[TAG_DEFUSED]")
+
+        # 3. Encase in strict boundary wrapper
+        return (
+            f'<EXTERNAL_UNTRUSTED_DATA source="{source}">\n'
+            f'{sanitized.strip()}\n'
+            f'</EXTERNAL_UNTRUSTED_DATA>'
+        )
+
+    @classmethod
+    def contains_injection(cls, content: str) -> bool:
+        if not content:
+            return False
+        for pattern in PROMPT_INJECTION_PATTERNS:
+            if re.search(pattern, content):
+                return True
+        return False
+

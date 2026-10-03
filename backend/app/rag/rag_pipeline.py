@@ -41,7 +41,7 @@ class RAGPipeline:
                 "context": "",
                 "sources": [],
                 "found_in_private_data": False,
-                "no_data_response": "I could not find this information in the authorized MedSentinel knowledge base."
+                "chunks": []
             }
 
         # 3. Build RAG Prompt Context

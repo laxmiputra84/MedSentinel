@@ -58,3 +58,34 @@ def search_hospitals_tool(
             "min_rating": min_rating
         }
     }
+
+
+def recommend_hospitals_by_patient_condition_tool(
+    db: Session,
+    user: User,
+    extracted_text: Optional[str] = None,
+    lab_results: Optional[List[Dict[str, Any]]] = None,
+    latitude: Optional[float] = None,
+    longitude: Optional[float] = None,
+    location: Optional[str] = None,
+    radius_km: Optional[float] = None,
+    is_available: Optional[bool] = None,
+    limit: int = 5
+) -> Dict[str, Any]:
+    """Recommend hospitals driven strictly by patient clinical evidence and biomarkers."""
+    from app.services.patient_condition_service import PatientConditionService
+    condition_res = PatientConditionService.extract_patient_condition_evidence(
+        extracted_text=extracted_text,
+        lab_results=lab_results
+    )
+    return HospitalService.recommend_hospitals_for_patient_condition(
+        db=db,
+        condition_analysis=condition_res,
+        latitude=latitude,
+        longitude=longitude,
+        location=location,
+        radius_km=radius_km,
+        is_available=is_available,
+        limit=limit
+    )
+

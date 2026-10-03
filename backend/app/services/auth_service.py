@@ -1,4 +1,5 @@
 from datetime import datetime, timezone, timedelta
+from sqlalchemy import or_, func
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from app.models.user import User
@@ -16,7 +17,8 @@ from app.core.config import settings
 class AuthService:
     @staticmethod
     def register_user(db: Session, request: UserRegisterRequest) -> User:
-        existing_user = db.query(User).filter(User.email == request.email).first()
+        clean_email = request.email.strip().lower()
+        existing_user = db.query(User).filter(func.lower(User.email) == clean_email).first()
         if existing_user:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -25,9 +27,9 @@ class AuthService:
 
         hashed_password = get_password_hash(request.password)
         new_user = User(
-            name=request.name,
-            email=request.email,
-            phone=request.phone,
+            name=request.name.strip(),
+            email=clean_email,
+            phone=request.phone.strip() if request.phone else None,
             hashed_password=hashed_password,
         )
         db.add(new_user)
@@ -37,7 +39,23 @@ class AuthService:
 
     @staticmethod
     def login_user(db: Session, request: UserLoginRequest) -> TokenResponse:
-        user = db.query(User).filter(User.email == request.email).first()
+        identifier = request.email.strip()
+        clean_digits = "".join(ch for ch in identifier if ch.isdigit())
+        
+        # Strip common formatting chars from stored phone in DB
+        clean_db_phone = func.replace(func.replace(func.replace(User.phone, " ", ""), "+", ""), "-", "")
+        
+        phone_match_clauses = [User.phone == identifier]
+        if clean_digits and len(clean_digits) >= 6:
+            phone_match_clauses.append(clean_db_phone.like(f"%{clean_digits}%"))
+
+        user = db.query(User).filter(
+            or_(
+                func.lower(User.email) == identifier.lower(),
+                *phone_match_clauses
+            )
+        ).first()
+
         if not user or not verify_password(request.password, user.hashed_password):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,

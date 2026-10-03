@@ -1,6 +1,6 @@
 from typing import Optional, List, Dict, Any
 from datetime import datetime
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 class KnowledgeDatasetBase(BaseModel):
     name: str = Field(..., max_length=200)
@@ -31,8 +31,7 @@ class KnowledgeDatasetOut(BaseModel):
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class KnowledgeDocumentOut(BaseModel):
     id: int
@@ -42,8 +41,7 @@ class KnowledgeDocumentOut(BaseModel):
     visibility: str
     created_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class KnowledgeChunkOut(BaseModel):
     id: int
@@ -53,8 +51,7 @@ class KnowledgeChunkOut(BaseModel):
     embedding_reference: Optional[str] = None
     created_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class KnowledgeProcessingLogOut(BaseModel):
     id: int
@@ -63,8 +60,7 @@ class KnowledgeProcessingLogOut(BaseModel):
     message: Optional[str] = None
     processed_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class HospitalImageOut(BaseModel):
     id: int
@@ -78,5 +74,4 @@ class HospitalImageOut(BaseModel):
     is_active: bool
     created_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

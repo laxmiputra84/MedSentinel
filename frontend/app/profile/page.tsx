@@ -477,7 +477,7 @@ function ProfileDashboardContent() {
                           </div>
                         </div>
                         <a
-                          href={`http://localhost:8000${doc.file_path}`}
+                          href={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}${doc.file_path.startsWith('/') ? '' : '/'}${doc.file_path}`}
                           target="_blank"
                           rel="noreferrer"
                           className="px-3 py-1 bg-white/10 hover:bg-white/20 text-white rounded text-xs"

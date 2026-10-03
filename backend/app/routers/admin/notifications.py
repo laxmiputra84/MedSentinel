@@ -1,7 +1,7 @@
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from pydantic import BaseModel
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from app.core.database import get_db
 from app.dependencies.auth import require_super_admin
 from app.models import User, Notification
@@ -25,7 +25,9 @@ def list_notifications(
 ):
     """List system notification log across users."""
     total = db.query(Notification).count()
-    notifs = db.query(Notification).order_by(Notification.created_at.desc()).offset((page - 1) * limit).limit(limit).all()
+    notifs = db.query(Notification).options(
+        joinedload(Notification.user)
+    ).order_by(Notification.created_at.desc()).offset((page - 1) * limit).limit(limit).all()
 
     items = [
         {
@@ -71,14 +73,18 @@ def broadcast_notification(
         created_count = 1
     else:
         active_users = db.query(User).filter(User.is_active == True).all()
-        for u in active_users:
-            NotificationService.create_notification(
-                db=db,
+        new_notifs = [
+            Notification(
                 user_id=u.id,
                 title=payload.title,
                 message=payload.message,
-                type=payload.type or "alert"
+                type=payload.type or "alert",
+                is_read=False
             )
+            for u in active_users
+        ]
+        db.add_all(new_notifs)
+        db.commit()
         created_count = len(active_users)
 
     AuditLogService.log_action(

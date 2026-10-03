@@ -18,12 +18,14 @@ export const Navbar: React.FC = () => {
 
   const navLinks = [
     { name: 'Home', href: '/' },
-    { name: 'Hospitals', href: '/hospitals' },
-    { name: 'Comparison', href: '/comparison' },
-    { name: 'Schemes', href: '/schemes' },
-    { name: 'Eligibility', href: '/eligibility' },
-    { name: 'Insurance', href: '/insurances' },
+    { name: 'Agent Workflow', href: '/agent-workflow' },
+    { name: 'Human Review', href: '/human-review' },
+    { name: 'Patients 360', href: '/patients' },
+    { name: 'AI Analytics', href: '/analytics' },
+    { name: 'Agent Monitor', href: '/agent-monitor' },
+    { name: 'Claims', href: '/claims' },
     { name: 'Vault', href: '/medical-vault' },
+    { name: 'Dashboard', href: '/health-dashboard' },
   ];
 
   const fetchNotifications = async () => {

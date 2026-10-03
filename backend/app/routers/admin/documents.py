@@ -1,7 +1,7 @@
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from pydantic import BaseModel
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from datetime import datetime, timezone
 from app.core.database import get_db
 from app.dependencies.auth import require_any_admin
@@ -25,7 +25,9 @@ def list_documents(
     current_admin: User = Depends(require_any_admin)
 ):
     """List medical records and verification queue across the platform."""
-    query = db.query(UserDocument)
+    query = db.query(UserDocument).options(
+        joinedload(UserDocument.user)
+    )
     if status:
         query = query.filter(UserDocument.status == status)
     if doc_type:

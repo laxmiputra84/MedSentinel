@@ -13,6 +13,7 @@ class InsuranceClaim(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    patient_id = Column(Integer, ForeignKey("patients.id", ondelete="SET NULL"), nullable=True, index=True)
     insurance_id = Column(Integer, ForeignKey("insurances.id", ondelete="SET NULL"), nullable=True, index=True)
     hospital_id = Column(Integer, ForeignKey("hospitals.id", ondelete="SET NULL"), nullable=True, index=True)
     claim_amount = Column(Float, nullable=False)
@@ -23,6 +24,8 @@ class InsuranceClaim(Base):
 
     # Relationships
     user = relationship("User", back_populates="insurance_claims")
+    patient = relationship("Patient", back_populates="claims")
     insurance = relationship("Insurance", back_populates="claims")
     hospital = relationship("Hospital", back_populates="claims")
     status_history = relationship("ClaimStatusHistory", back_populates="claim", cascade="all, delete-orphan", order_by="ClaimStatusHistory.created_at.desc()")
+    fraud_analysis = relationship("FraudAnalysis", back_populates="claim", uselist=False, cascade="all, delete-orphan")

@@ -1,7 +1,7 @@
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from pydantic import BaseModel
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from app.core.database import get_db
 from app.dependencies.auth import require_any_admin
 from app.models import User, InsuranceClaim, ClaimStatusHistory
@@ -25,7 +25,11 @@ def list_claims(
     current_admin: User = Depends(require_any_admin)
 ):
     """List and filter insurance claims with administrative scoping."""
-    query = db.query(InsuranceClaim)
+    query = db.query(InsuranceClaim).options(
+        joinedload(InsuranceClaim.user),
+        joinedload(InsuranceClaim.hospital),
+        joinedload(InsuranceClaim.insurance)
+    )
     if status:
         query = query.filter(InsuranceClaim.claim_status == status)
     if hospital_id:
@@ -72,11 +76,17 @@ def get_claim_detail(
     current_admin: User = Depends(require_any_admin)
 ):
     """Retrieve full claim record, documents, and historical status audit trail."""
-    claim = db.query(InsuranceClaim).filter(InsuranceClaim.id == claim_id).first()
+    claim = db.query(InsuranceClaim).options(
+        joinedload(InsuranceClaim.user),
+        joinedload(InsuranceClaim.hospital),
+        joinedload(InsuranceClaim.insurance)
+    ).filter(InsuranceClaim.id == claim_id).first()
     if not claim:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Claim not found.")
 
-    timeline = db.query(ClaimStatusHistory).filter(
+    timeline = db.query(ClaimStatusHistory).options(
+        joinedload(ClaimStatusHistory.updated_by)
+    ).filter(
         ClaimStatusHistory.claim_id == claim.id
     ).order_by(ClaimStatusHistory.created_at.desc()).all()
 
@@ -100,13 +110,21 @@ def get_claim_detail(
             "email": claim.user.email if claim.user else "N/A",
             "phone": claim.user.phone if claim.user else "N/A"
         },
-        "hospital": claim.hospital.name if claim.hospital else "N/A",
-        "insurance": claim.insurance.name if claim.insurance else "N/A",
+        "hospital": {
+            "id": claim.hospital.id if claim.hospital else None,
+            "name": claim.hospital.name if claim.hospital else "N/A",
+            "location": claim.hospital.location if claim.hospital else "N/A"
+        },
+        "insurance": {
+            "id": claim.insurance.id if claim.insurance else None,
+            "name": claim.insurance.name if claim.insurance else "N/A"
+        },
         "claim_amount": claim.claim_amount,
         "claim_status": claim.claim_status,
         "claim_description": claim.claim_description,
         "claim_date": claim.claim_date.isoformat() if claim.claim_date else None,
-        "timeline": timeline_items
+        "timeline": timeline_items,
+        "timeline_history": timeline_items
     }
 
 @router.patch("/{claim_id}/status")

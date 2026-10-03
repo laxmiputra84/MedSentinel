@@ -17,12 +17,11 @@ def get_user_saved_hospitals(
     db: Session = Depends(get_db)
 ):
     """Retrieve all saved hospitals for the authenticated user."""
-    saved_items = db.query(SavedItem).filter(SavedItem.user_id == current_user.id).all()
-    hospital_ids = [item.hospital_id for item in saved_items]
-    if not hospital_ids:
-        return []
-    hospitals = db.query(Hospital).filter(Hospital.id.in_(hospital_ids)).all()
-    return hospitals
+    return db.query(Hospital).join(
+        SavedItem, SavedItem.hospital_id == Hospital.id
+    ).filter(
+        SavedItem.user_id == current_user.id
+    ).all()
 
 @router.post("", response_model=MessageResponse)
 def save_hospital(

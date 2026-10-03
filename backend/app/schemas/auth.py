@@ -8,7 +8,7 @@ class UserRegisterRequest(BaseModel):
     password: str = Field(..., min_length=6)
 
 class UserLoginRequest(BaseModel):
-    email: EmailStr
+    email: str = Field(..., description="Email address or registered phone number")
     password: str
 
 class TokenRefreshRequest(BaseModel):

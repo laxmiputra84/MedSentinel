@@ -13,8 +13,8 @@ class Settings(BaseSettings):
     DEBUG: bool = True
 
     # MySQL Database Configuration
-    DATABASE_URL: str = "mysql+pymysql://root:password@localhost:3306/medsentinel"
-    TEST_DATABASE_URL: str = "mysql+pymysql://root:password@localhost:3306/medsentinel_test"
+    DATABASE_URL: str = "mysql+pymysql://root:cse%40123@localhost:3306/medsentinel"
+    TEST_DATABASE_URL: str = "mysql+pymysql://root:cse%40123@localhost:3306/medsentinel_test"
     DATABASE_POOL_SIZE: int = 10
     DATABASE_MAX_OVERFLOW: int = 20
     DATABASE_POOL_RECYCLE: int = 3600
@@ -57,7 +57,7 @@ class Settings(BaseSettings):
     UPLOAD_DIRECTORY: str = "./uploads"
     MAX_FILE_SIZE_MB: int = 10
     MAX_UPLOAD_SIZE_MB: int = 10
-    ALLOWED_EXTENSIONS: List[str] = [".jpg", ".jpeg", ".png", ".gif", ".pdf", ".doc", ".docx"]
+    ALLOWED_EXTENSIONS: List[str] = [".jpg", ".jpeg", ".png", ".gif", ".pdf", ".doc", ".docx", ".txt"]
 
     # Admin Settings
     ADMIN_ANALYTICS_CACHE_SECONDS: int = 300
@@ -72,6 +72,6 @@ class Settings(BaseSettings):
             return [origin.strip() for origin in self.CORS_ORIGINS.split(",") if origin.strip()]
         return self.CORS_ORIGINS
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+    model_config = SettingsConfigDict(env_file=(".env", "backend/.env", "../backend/.env"), env_file_encoding="utf-8", extra="ignore")
 
 settings = Settings()

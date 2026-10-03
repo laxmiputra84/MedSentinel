@@ -1,6 +1,6 @@
 from typing import List, Optional
 from fastapi import APIRouter, Depends, Query
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from app.core.database import get_db
 from app.dependencies.auth import require_super_admin
 from app.models import User, AdminAuditLog
@@ -17,7 +17,9 @@ def list_audit_logs(
     current_admin: User = Depends(require_super_admin)
 ):
     """Retrieve full audit log history for Super Admin oversight."""
-    query = db.query(AdminAuditLog)
+    query = db.query(AdminAuditLog).options(
+        joinedload(AdminAuditLog.admin_user)
+    )
     if action:
         query = query.filter(AdminAuditLog.action.ilike(f"%{action}%"))
     if resource_type:

@@ -2,6 +2,7 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from app.core.database import get_db
 from app.dependencies.auth import require_any_admin, require_super_admin
 from app.models import User, Insurance, InsuranceClaim
@@ -38,9 +39,16 @@ def list_insurances(
 
     plans = query.all()
 
+    # Aggregate claim counts in a single group-by query
+    claim_counts = dict(
+        db.query(InsuranceClaim.insurance_id, func.count(InsuranceClaim.id))
+        .group_by(InsuranceClaim.insurance_id)
+        .all()
+    )
+
     items = []
     for p in plans:
-        total_claims = db.query(InsuranceClaim).filter(InsuranceClaim.insurance_id == p.id).count()
+        total_claims = claim_counts.get(p.id, 0)
         items.append({
             "id": p.id,
             "name": p.name,

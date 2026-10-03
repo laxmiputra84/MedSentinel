@@ -113,4 +113,71 @@ api.interceptors.response.use(
   }
 );
 
+// Agentic Platform API Client Helpers
+export const AgenticAPI = {
+  // Human Review Operations
+  getHumanReviews: async (status?: string) => {
+    const params = status ? { status } : {};
+    const res = await api.get('/human-reviews', { params });
+    return res.data;
+  },
+  approveHumanReview: async (reviewId: number, comments: string, modifications?: any) => {
+    const res = await api.post(`/human-reviews/${reviewId}/approve`, { comments, modifications });
+    return res.data;
+  },
+  rejectHumanReview: async (reviewId: number, comments: string) => {
+    const res = await api.post(`/human-reviews/${reviewId}/reject`, { comments });
+    return res.data;
+  },
+  escalateHumanReview: async (reviewId: number, reason: string) => {
+    const res = await api.post(`/human-reviews/${reviewId}/escalate`, { reason });
+    return res.data;
+  },
+
+  // Patient 360 & Longitudinal Timeline
+  getPatient360: async (patientId: number | string) => {
+    const res = await api.get(`/patients/${patientId}/360`);
+    return res.data;
+  },
+  getPatientTimeline: async (patientId: number | string) => {
+    const res = await api.get(`/patients/${patientId}/timeline`);
+    return res.data;
+  },
+  getPatientLabTrends: async (patientId: number | string) => {
+    const res = await api.get(`/patients/${patientId}/labs/trends`);
+    return res.data;
+  },
+
+  // Healthcare Data Analyst (DuckDB)
+  queryAnalytics: async (query: string, chart_type?: string, parameters?: any) => {
+    const res = await api.post('/analytics/query', { query, chart_type, parameters });
+    return res.data;
+  },
+  getAnalyticsProfile: async () => {
+    const res = await api.get('/analytics/profile');
+    return res.data;
+  },
+
+  // Agent Operations Monitor
+  getAgentMonitorStats: async () => {
+    const res = await api.get('/agent-monitor');
+    return res.data;
+  },
+
+  // Workflows
+  getWorkflows: async (params?: { patient_id?: number; status?: string; limit?: number }) => {
+    const res = await api.get('/workflows', { params });
+    return res.data;
+  },
+  getWorkflowById: async (workflowId: string) => {
+    const res = await api.get(`/workflows/${workflowId}`);
+    return res.data;
+  },
+  cancelWorkflow: async (workflowId: string, reason?: string) => {
+    const res = await api.post(`/workflows/${workflowId}/cancel`, { reason });
+    return res.data;
+  },
+};
+
 export default api;
+

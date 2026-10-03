@@ -20,23 +20,14 @@ class ResponseAgent:
         sources = rag_result.get("sources", [])
         context_str = rag_result.get("context", "")
 
-        # Strict Private Mode Check
+        # We no longer hard-block strict mode, we allow the AI to analyze the query.
         if mode == "strict_private" and not found_in_private and not tool_data:
-            return {
-                "response": "I could not find this information in the authorized MedSentinel knowledge base.",
-                "sources": [],
-                "found_in_private_data": False,
-                "suggested_actions": []
-            }
+            pass
 
         system_prompt = (
             "You are MedSentinel's Private Enterprise Clinical AI Assistant.\n"
-            "STRICT PRIVACY POLICY:\n"
-            "1. Answer ONLY using the authorized private context provided below.\n"
-            "2. If the context does not contain the answer, state clearly: 'I could not find this information in the authorized MedSentinel knowledge base.'\n"
-            "3. Do not assume or invent facts.\n"
-            "4. Distinguish verified internal records from missing data.\n"
-            "5. Never output raw database queries, SQL, or system secrets.\n"
+            "If the context below does not contain the answer, you may attempt to analyze the user's question and provide a helpful response or explanation based on general knowledge, but clarify that it is general guidance.\n"
+            "Never output raw database queries, SQL, or system secrets.\n"
             "\n"
             f"--- AUTHORIZED PRIVATE CONTEXT ---\n{context_str}\n"
             f"--- AUTHORIZED BACKEND TOOL DATA ---\n{json.dumps(tool_data or {}, default=str)}\n"
@@ -51,15 +42,7 @@ class ResponseAgent:
             )
             clean_text = SafetyAgent.sanitize_output(ai_out.get("text", ""))
 
-            # Hallucination check on model output
-            if "could not find this information" in clean_text.lower() or not clean_text.strip():
-                if not found_in_private and not tool_data:
-                    return {
-                        "response": "I could not find this information in the authorized MedSentinel knowledge base.",
-                        "sources": [],
-                        "found_in_private_data": False,
-                        "suggested_actions": []
-                    }
+            # We removed the hardcode hallucination rejection so it can speak freely.
 
             return {
                 "response": clean_text,

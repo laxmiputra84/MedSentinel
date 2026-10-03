@@ -346,6 +346,78 @@ function ClaimsContent() {
                 </div>
               </div>
 
+              {/* FEATURE 9: INSURANCE CLAIM FRAUD ANALYSIS SECTION */}
+              <div className="pt-4 border-t border-white/10 space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-bold text-gray-300 flex items-center gap-1.5 uppercase tracking-wider">
+                    <span className="material-symbols-outlined text-sm text-indigo-400">policy</span>
+                    Fraud Risk & Document Integrity Analysis
+                  </h4>
+                  {selectedClaim.fraud_analysis && (
+                    <span
+                      className={`px-2 py-0.5 rounded text-[10px] font-extrabold uppercase ${
+                        selectedClaim.fraud_analysis.fraud_risk === 'LOW'
+                          ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                          : selectedClaim.fraud_analysis.fraud_risk === 'MEDIUM'
+                          ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                          : 'bg-red-500/20 text-red-300 border border-red-500/30'
+                      }`}
+                    >
+                      {selectedClaim.fraud_analysis.fraud_risk} RISK ({selectedClaim.fraud_analysis.fraud_score}/100)
+                    </span>
+                  )}
+                </div>
+
+                {selectedClaim.fraud_analysis ? (
+                  <div className="bg-black/40 border border-white/10 rounded-xl p-4 space-y-2 text-xs">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] pb-2 border-b border-white/5">
+                      <div>
+                        <span className="text-gray-500 block">Duplicate Docs:</span>
+                        <span className={selectedClaim.fraud_analysis.duplicate_docs_detected ? 'text-amber-400 font-bold' : 'text-emerald-400'}>
+                          {selectedClaim.fraud_analysis.duplicate_docs_detected ? 'Detected' : 'None'}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-gray-500 block">Reused Hashes:</span>
+                        <span className={selectedClaim.fraud_analysis.reused_hash_detected ? 'text-red-400 font-bold' : 'text-emerald-400'}>
+                          {selectedClaim.fraud_analysis.reused_hash_detected ? 'Reused' : 'Unique'}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-gray-500 block">Duplicate Invoices:</span>
+                        <span className={selectedClaim.fraud_analysis.duplicate_invoices_detected ? 'text-amber-400 font-bold' : 'text-emerald-400'}>
+                          {selectedClaim.fraud_analysis.duplicate_invoices_detected ? 'Flagged' : 'Passed'}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-gray-500 block">Patient Match:</span>
+                        <span className={selectedClaim.fraud_analysis.patient_mismatch_detected ? 'text-red-400 font-bold' : 'text-emerald-400'}>
+                          {selectedClaim.fraud_analysis.patient_mismatch_detected ? 'Mismatch' : 'Verified'}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-1 pt-1">
+                      <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Audit Diagnostic Flags:</span>
+                      {selectedClaim.fraud_analysis.flags && selectedClaim.fraud_analysis.flags.length > 0 ? (
+                        <ul className="space-y-1">
+                          {selectedClaim.fraud_analysis.flags.map((flag: string, fIdx: number) => (
+                            <li key={fIdx} className="text-[11px] text-gray-300 flex items-start gap-1.5">
+                              <span className="text-indigo-400 font-bold">•</span>
+                              <span>{flag}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p className="text-[11px] text-gray-400">No anomalies detected.</p>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-xs text-gray-500">Fraud analysis pending automated scan.</p>
+                )}
+              </div>
+
               {/* Status History Audit Trail */}
               {selectedClaim.status_history && selectedClaim.status_history.length > 0 && (
                 <div className="pt-4 border-t border-white/10 space-y-2">

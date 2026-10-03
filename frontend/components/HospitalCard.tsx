@@ -56,15 +56,31 @@ export const HospitalCard: React.FC<HospitalCardProps> = ({
   return (
     <div className="bg-gray-800/80 backdrop-blur-md rounded-2xl border border-white/10 p-6 shadow-xl card-hover flex flex-col justify-between transition-all">
       <div>
-        {/* Top bar: specialization badge + rating & bookmark */}
-        <div className="flex justify-between items-start mb-4">
-          <span className="px-3 py-1 bg-blue-500/20 border border-blue-500/30 text-blue-300 text-xs font-semibold rounded-full uppercase tracking-wider">
-            {hospital.specialization || 'Multispecialty'}
-          </span>
+        {/* Top bar: specialization badge + verification + rating & bookmark */}
+        <div className="flex justify-between items-start mb-4 gap-2 flex-wrap">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="px-3 py-1 bg-blue-500/20 border border-blue-500/30 text-blue-300 text-xs font-semibold rounded-full uppercase tracking-wider">
+              {hospital.specialization || 'Multispecialty'}
+            </span>
+            <span className="px-2 py-0.5 bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-medium rounded-md flex items-center gap-1">
+              <span className="material-symbols-outlined text-xs text-emerald-400">verified</span>
+              <span>Verified</span>
+            </span>
+            {hospital.is_available !== undefined && hospital.is_available !== null && (
+              <span className={`px-2 py-0.5 text-xs font-medium rounded-md border flex items-center gap-1 ${
+                hospital.is_available
+                  ? 'bg-green-500/15 border-green-500/30 text-green-300'
+                  : 'bg-amber-500/15 border-amber-500/30 text-amber-300'
+              }`}>
+                <span className={`w-1.5 h-1.5 rounded-full ${hospital.is_available ? 'bg-green-400 animate-pulse' : 'bg-amber-400'}`}></span>
+                <span>{hospital.is_available ? 'Available' : 'Occupied'}</span>
+              </span>
+            )}
+          </div>
           <div className="flex items-center space-x-2">
             <span className="flex items-center space-x-1 bg-yellow-500/20 border border-yellow-500/30 text-yellow-300 px-2 py-0.5 rounded-lg text-xs font-bold">
               <span className="material-symbols-outlined text-sm text-yellow-400">star</span>
-              <span>{hospital.rating?.toFixed(1) || '4.5'}</span>
+              <span>{hospital.rating ? hospital.rating.toFixed(1) : '4.5'}</span>
             </span>
             <button
               onClick={handleBookmark}
@@ -87,11 +103,26 @@ export const HospitalCard: React.FC<HospitalCardProps> = ({
         <h3 className="text-xl font-bold text-white font-['Manrope'] mb-1 hover:text-blue-400 transition-colors">
           <Link href={`/hospitals/${hospital.id}`}>{hospital.name}</Link>
         </h3>
-        <p className="text-gray-400 text-sm flex items-center gap-1 mb-4">
+        <p className="text-gray-400 text-sm flex items-center gap-1 mb-4 flex-wrap">
           <span className="material-symbols-outlined text-base text-gray-400">location_on</span>
           <span>{hospital.location || 'Central Location'}</span>
-          <span className="text-gray-600">•</span>
-          <span className="text-blue-400 font-medium">{hospital.distance || '2.5'} km away</span>
+          {hospital.distance_km != null ? (
+            <>
+              <span className="text-gray-600">•</span>
+              <span className="text-emerald-400 font-semibold flex items-center gap-0.5">
+                <span className="material-symbols-outlined text-xs">near_me</span>
+                <span>{hospital.distance_km} km away</span>
+              </span>
+            </>
+          ) : (
+            <>
+              <span className="text-gray-600">•</span>
+              <span className="text-gray-500 text-xs font-normal flex items-center gap-0.5">
+                <span className="material-symbols-outlined text-xs">location_off</span>
+                <span>Distance uncalculated (Enable GPS)</span>
+              </span>
+            </>
+          )}
         </p>
 
         {/* Estimated Treatment Cost */}

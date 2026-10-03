@@ -172,12 +172,12 @@ function LoginFormContent() {
           {activeTab === 'login' ? (
             <form onSubmit={handleLoginSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-gray-300 mb-1.5">Email Address</label>
+                <label className="block text-xs font-semibold text-gray-300 mb-1.5">Email or Phone Number</label>
                 <input
-                  type="email"
+                  type="text"
                   value={loginEmail}
                   onChange={(e) => setLoginEmail(e.target.value)}
-                  placeholder="demo@medsentinel.com"
+                  placeholder="name@example.com or +91 98765 43210"
                   required
                   className="w-full px-4 py-3 bg-black/40 border border-white/15 rounded-xl focus:outline-none focus:border-blue-500 text-white placeholder-gray-500 text-sm transition-all"
                 />

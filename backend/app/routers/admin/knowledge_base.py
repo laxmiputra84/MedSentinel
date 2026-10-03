@@ -3,6 +3,7 @@ import aiofiles
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Form, Query
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from app.core.database import get_db
 from app.dependencies.auth import get_current_user, require_super_admin
 from app.models import User, KnowledgeDataset, KnowledgeDocument, KnowledgeChunk, KnowledgeProcessingLog
@@ -41,10 +42,24 @@ def list_datasets(
         query = query.filter(KnowledgeDataset.hospital_id == current_user.hospital_id)
 
     datasets = query.order_by(KnowledgeDataset.created_at.desc()).all()
+
+    # Precompute aggregate counts in single SQL passes
+    doc_counts = dict(
+        db.query(KnowledgeDocument.dataset_id, func.count(KnowledgeDocument.id))
+        .group_by(KnowledgeDocument.dataset_id)
+        .all()
+    )
+    chunk_counts = dict(
+        db.query(KnowledgeDocument.dataset_id, func.count(KnowledgeChunk.id))
+        .join(KnowledgeChunk, KnowledgeChunk.document_id == KnowledgeDocument.id)
+        .group_by(KnowledgeDocument.dataset_id)
+        .all()
+    )
+
     results = []
     for d in datasets:
-        doc_count = db.query(KnowledgeDocument).filter(KnowledgeDocument.dataset_id == d.id).count()
-        chunk_count = db.query(KnowledgeChunk).join(KnowledgeDocument).filter(KnowledgeDocument.dataset_id == d.id).count()
+        doc_count = doc_counts.get(d.id, 0)
+        chunk_count = chunk_counts.get(d.id, 0)
         vec_count = VectorStore.get_dataset_vector_count(d.id)
         
         d_out = KnowledgeDatasetOut(

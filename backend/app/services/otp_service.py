@@ -20,14 +20,14 @@ class OtpService:
         expires_at = datetime.now(timezone.utc) + timedelta(minutes=5)
 
         if existing_otp:
-            existing_otp.otp_code = otp_val
+            existing_otp.code = otp_val
             existing_otp.expires_at = expires_at
             existing_otp.is_verified = False
             existing_otp.attempts = 0
         else:
             new_otp = OtpCode(
                 phone=phone,
-                otp_code=otp_val,
+                code=otp_val,
                 expires_at=expires_at,
                 is_verified=False,
                 attempts=0
@@ -57,9 +57,10 @@ class OtpService:
             return False
 
         record.attempts += 1
-        if record.otp_code == submitted_otp:
+        if record.code == submitted_otp:
             record.is_verified = True
-            record.verified_until = now + timedelta(minutes=5)
+            # Extend validity window for 10 minutes so user can complete booking
+            record.expires_at = now + timedelta(minutes=10)
             db.commit()
             return True
 
@@ -69,12 +70,12 @@ class OtpService:
     @staticmethod
     def is_phone_verified(db: Session, phone: str) -> bool:
         record = db.query(OtpCode).filter(OtpCode.phone == phone, OtpCode.is_verified == True).first()
-        if not record or not record.verified_until:
+        if not record:
             return False
 
         now = datetime.now(timezone.utc)
-        until = record.verified_until.replace(tzinfo=timezone.utc) if record.verified_until.tzinfo is None else record.verified_until
-        if until > now:
+        record_expires = record.expires_at.replace(tzinfo=timezone.utc) if record.expires_at.tzinfo is None else record.expires_at
+        if record_expires > now:
             return True
         return False
 

@@ -1,0 +1,182 @@
+{
+  "intent_agent": [
+    {
+      "query": "Analyze this CBC lab report for Hemoglob...",
+      "detected_intent": "lab_analysis",
+      "target_workflow": "LAB_REPORT",
+      "expected_workflow": "LAB_REPORT",
+      "matched": true
+    },
+    {
+      "query": "Find potential anomalies and duplicate b...",
+      "detected_intent": "claim_audit",
+      "target_workflow": "INSURANCE_CLAIM",
+      "expected_workflow": "INSURANCE_CLAIM",
+      "matched": true
+    },
+    {
+      "query": "Analyze this healthcare CSV dataset for ...",
+      "detected_intent": "healthcare_analytics",
+      "target_workflow": "CLINICAL_SUMMARY",
+      "expected_workflow": "CLINICAL_SUMMARY",
+      "matched": true
+    },
+    {
+      "query": "Review this patient's chronological medi...",
+      "detected_intent": "patient_clinical_summary",
+      "target_workflow": "CLINICAL_SUMMARY",
+      "expected_workflow": "CLINICAL_SUMMARY",
+      "matched": true
+    }
+  ],
+  "planner_agent": [
+    {
+      "workflow_type": "LAB_REPORT",
+      "steps": [
+        "patient_intake",
+        "document_intelligence",
+        "ocr",
+        "lab_analysis",
+        "data_validation",
+        "patient_history",
+        "risk_prediction",
+        "medical_rag",
+        "safety",
+        "verification_report"
+      ],
+      "is_valid_dag": true,
+      "parallel_tiers_count": 6,
+      "tiers": [
+        [
+          "patient_intake"
+        ],
+        [
+          "document_intelligence",
+          "ocr"
+        ],
+        [
+          "lab_analysis",
+          "data_validation"
+        ],
+        [
+          "patient_history",
+          "risk_prediction",
+          "medical_rag"
+        ],
+        [
+          "safety"
+        ],
+        [
+          "verification_report"
+        ]
+      ]
+    },
+    {
+      "workflow_type": "INSURANCE_CLAIM",
+      "steps": [
+        "patient_intake",
+        "document_intelligence",
+        "claims",
+        "risk_prediction",
+        "safety",
+        "verification_report"
+      ],
+      "is_valid_dag": true,
+      "parallel_tiers_count": 5,
+      "tiers": [
+        [
+          "patient_intake"
+        ],
+        [
+          "document_intelligence"
+        ],
+        [
+          "claims",
+          "risk_prediction"
+        ],
+        [
+          "safety"
+        ],
+        [
+          "verification_report"
+        ]
+      ]
+    },
+    {
+      "workflow_type": "PRESCRIPTION",
+      "steps": [
+        "patient_intake",
+        "document_intelligence",
+        "ocr",
+        "data_validation",
+        "symptom_clinical",
+        "medication_safety",
+        "medical_rag",
+        "safety",
+        "verification_report"
+      ],
+      "is_valid_dag": true,
+      "parallel_tiers_count": 6,
+      "tiers": [
+        [
+          "patient_intake"
+        ],
+        [
+          "document_intelligence",
+          "ocr"
+        ],
+        [
+          "data_validation",
+          "symptom_clinical"
+        ],
+        [
+          "medication_safety",
+          "medical_rag"
+        ],
+        [
+          "safety"
+        ],
+        [
+          "verification_report"
+        ]
+      ]
+    }
+  ],
+  "pii_redaction": {
+    "verified": true,
+    "output": "Patient Aadhaar: ****-****-****, PAN: *****REDACTED*****, Phone: ***-***-****, Email: a***@example.com"
+  },
+  "tool_tests": [
+    {
+      "case": "Agent not in allowlist",
+      "blocked": true,
+      "error": "Security Violation: Agent 'document_intelligence' is not permitted to call tool 'detect_claim_anomaly'."
+    },
+    {
+      "case": "Non-existent tool",
+      "blocked": true,
+      "error": "Tool 'delete_patient_database' is not registered in Tool Gateway."
+    },
+    {
+      "case": "Authorized tool execution",
+      "allowed": true
+    }
+  ],
+  "patient_isolation": {
+    "verified": true
+  },
+  "medication_safety": {
+    "ddi_detected": true,
+    "duplicate_detected": false,
+    "escalation_required": false
+  },
+  "data_analyst_ast": {
+    "select_valid": true,
+    "drop_blocked": true,
+    "delete_blocked": true,
+    "insert_blocked": true
+  },
+  "human_review_signoff": {
+    "verified": true
+  }
+}

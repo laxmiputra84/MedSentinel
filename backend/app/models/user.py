@@ -34,3 +34,5 @@ class User(Base):
     user_insurances = relationship("UserInsurance", back_populates="user", cascade="all, delete-orphan")
     insurance_claims = relationship("InsuranceClaim", back_populates="user", cascade="all, delete-orphan")
     notifications = relationship("Notification", back_populates="user", cascade="all, delete-orphan")
+    patients = relationship("Patient", back_populates="user", cascade="all, delete-orphan")
+    recommendations = relationship("Recommendation", back_populates="user", cascade="all, delete-orphan")
